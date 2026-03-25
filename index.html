@@ -1,1 +1,3710 @@
+<!DOCTYPE html>
+<html lang="th">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FreshLink — AI Waste Risk Platform</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ══════════════════════════════
+   RESET & ROOT VARS
+══════════════════════════════ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        img {
+            display: block;
+            max-width: 100%;
+        }
+
+        button {
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        input {
+            font-family: inherit;
+        }
+
+        :root {
+            --bg: #f5f6fa;
+            --surface: #ffffff;
+            --surface2: #f8f9fc;
+            --border: #e8eaf0;
+            --border2: #d1d5db;
+
+            --role-ai: #6366f1;
+            --role-inv: #f59e0b;
+            --role-b2b: #10b981;
+            --role-sup: #3b82f6;
+            --role-feed: #ec4899;
+
+            --role-ai-lt: #eef2ff;
+            --role-inv-lt: #fffbeb;
+            --role-b2b-lt: #ecfdf5;
+            --role-sup-lt: #eff6ff;
+            --role-feed-lt: #fdf2f8;
+
+            --danger: #ef4444;
+            --warn: #f59e0b;
+            --success: #10b981;
+
+            --txt: #111827;
+            --txt2: #6b7280;
+            --txt3: #9ca3af;
+
+            --sh-sm: 0 1px 3px rgba(0, 0, 0, .06), 0 1px 2px rgba(0, 0, 0, .04);
+            --sh: 0 4px 16px rgba(0, 0, 0, .08), 0 1px 3px rgba(0, 0, 0, .05);
+            --sh-lg: 0 10px 30px rgba(0, 0, 0, .1), 0 4px 10px rgba(0, 0, 0, .06);
+
+            --r: 14px;
+            --fh: 'Kanit', sans-serif;
+            --fb: 'Sarabun', sans-serif;
+            --fm: 'IBM Plex Mono', monospace;
+
+            --nav-h: 62px;
+            --mob-nav-h: 56px;
+        }
+
+        body {
+            font-family: var(--fb);
+            background: var(--bg);
+            color: var(--txt);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ══════════════════════════════
+   TOPBAR
+══════════════════════════════ */
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 300;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: var(--nav-h);
+            padding: 0 clamp(12px, 3vw, 28px);
+            gap: 10px;
+            background: rgba(255, 255, 255, .96);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 2px solid var(--border);
+            box-shadow: var(--sh-sm);
+        }
+
+        .logo {
+            font-family: var(--fh);
+            font-weight: 700;
+            font-size: clamp(1.1rem, 3vw, 1.35rem);
+            color: var(--txt);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+        .logo-badge {
+            font-size: .58rem;
+            padding: 2px 7px;
+            border-radius: 4px;
+            background: var(--role-ai);
+            color: #fff;
+            font-weight: 600;
+            font-family: var(--fm);
+            letter-spacing: .5px;
+        }
+
+        /* Desktop nav */
+        .nav-desktop {
+            display: flex;
+            gap: 3px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .nav-desktop::-webkit-scrollbar {
+            display: none;
+        }
+
+        .nt {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 7px 12px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-family: var(--fb);
+            font-size: .8rem;
+            font-weight: 500;
+            color: var(--txt2);
+            background: transparent;
+            transition: all .18s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .nt:hover {
+            background: var(--bg);
+            color: var(--txt);
+        }
+
+        .nt.active {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .nt[data-page="dashboard"].active {
+            background: var(--role-ai);
+            box-shadow: 0 4px 14px rgba(99, 102, 241, .3);
+        }
+
+        .nt[data-page="inventory"].active {
+            background: var(--role-inv);
+            box-shadow: 0 4px 14px rgba(245, 158, 11, .3);
+        }
+
+        .nt[data-page="b2b"].active {
+            background: var(--role-b2b);
+            box-shadow: 0 4px 14px rgba(16, 185, 129, .3);
+        }
+
+        .nt[data-page="supplier"].active {
+            background: var(--role-sup);
+            box-shadow: 0 4px 14px rgba(59, 130, 246, .3);
+        }
+
+        .nt[data-page="feed"].active {
+            background: var(--role-feed);
+            box-shadow: 0 4px 14px rgba(236, 72, 153, .3);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .clk-wrap {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: var(--fm);
+            font-size: .72rem;
+            color: var(--txt2);
+            white-space: nowrap;
+        }
+
+        .sdot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, .2);
+            animation: blink 2s infinite;
+            flex-shrink: 0;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: .3;
+            }
+        }
+
+        /* Hamburger */
+        .ham {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            width: 38px;
+            height: 38px;
+            cursor: pointer;
+            padding: 8px;
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            border-radius: 9px;
+            flex-shrink: 0;
+        }
+
+        .ham span {
+            display: block;
+            height: 2px;
+            border-radius: 2px;
+            background: var(--txt2);
+            transition: all .25s;
+            transform-origin: center;
+        }
+
+        .ham.open span:nth-child(1) {
+            transform: translateY(7px) rotate(45deg);
+        }
+
+        .ham.open span:nth-child(2) {
+            opacity: 0;
+            transform: scaleX(0);
+        }
+
+        .ham.open span:nth-child(3) {
+            transform: translateY(-7px) rotate(-45deg);
+        }
+
+        /* Mobile bottom nav */
+        .mob-bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 290;
+            background: rgba(255, 255, 255, .97);
+            border-top: 1.5px solid var(--border);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, .08);
+            height: var(--mob-nav-h);
+            padding: 0 4px;
+            padding-bottom: env(safe-area-inset-bottom, 0);
+        }
+
+        .mob-nav-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            height: 100%;
+            width: 100%;
+        }
+
+        .mn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-family: var(--fb);
+            font-size: .62rem;
+            font-weight: 500;
+            color: var(--txt3);
+            transition: all .18s;
+            padding: 4px 2px;
+            border-radius: 10px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .mn-ico {
+            font-size: 1.22rem;
+            line-height: 1;
+        }
+
+        .mn.active {
+            color: var(--mc, var(--role-ai));
+        }
+
+        .mn[data-page="dashboard"].active {
+            --mc: var(--role-ai);
+        }
+
+        .mn[data-page="inventory"].active {
+            --mc: var(--role-inv);
+        }
+
+        .mn[data-page="b2b"].active {
+            --mc: var(--role-b2b);
+        }
+
+        .mn[data-page="supplier"].active {
+            --mc: var(--role-sup);
+        }
+
+        .mn[data-page="feed"].active {
+            --mc: var(--role-feed);
+        }
+
+        .mn.active .mn-ico {
+            transform: scale(1.15);
+        }
+
+        /* ══════════════════════════════
+   PAGES
+══════════════════════════════ */
+        #app {
+            min-height: 100vh;
+        }
+
+        .page {
+            display: none;
+            padding: clamp(14px, 3vw, 28px);
+            max-width: 1440px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .page.active {
+            display: block;
+            animation: pgIn .2s ease;
+        }
+
+        @keyframes pgIn {
+            from {
+                opacity: .5;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Page header */
+        .ph {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            padding-bottom: 18px;
+            border-bottom: 2px solid var(--pc, var(--border));
+        }
+
+        .ph-ai {
+            --pc: var(--role-ai);
+        }
+
+        .ph-inv {
+            --pc: var(--role-inv);
+        }
+
+        .ph-b2b {
+            --pc: var(--role-b2b);
+        }
+
+        .ph-sup {
+            --pc: var(--role-sup);
+        }
+
+        .ph-feed {
+            --pc: var(--role-feed);
+        }
+
+        .ph-role {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-family: var(--fm);
+            font-size: .66rem;
+            font-weight: 600;
+            letter-spacing: .4px;
+            padding: 3px 10px;
+            border-radius: 5px;
+            margin-bottom: 6px;
+        }
+
+        .role-ai {
+            background: var(--role-ai-lt);
+            color: var(--role-ai);
+        }
+
+        .role-inv {
+            background: var(--role-inv-lt);
+            color: #b45309;
+        }
+
+        .role-b2b {
+            background: var(--role-b2b-lt);
+            color: #059669;
+        }
+
+        .role-sup {
+            background: var(--role-sup-lt);
+            color: #1d4ed8;
+        }
+
+        .role-feed {
+            background: var(--role-feed-lt);
+            color: #be185d;
+        }
+
+        .ph-title {
+            font-family: var(--fh);
+            font-size: clamp(1.25rem, 3.5vw, 1.7rem);
+            font-weight: 700;
+            line-height: 1.2;
+            color: var(--txt);
+        }
+
+        .ph-sub {
+            font-size: clamp(.75rem, 2vw, .85rem);
+            color: var(--txt2);
+            margin-top: 5px;
+            line-height: 1.5;
+        }
+
+        .ph-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+            flex-shrink: 0;
+            margin-top: 4px;
+        }
+
+        /* ══════════════════════════════
+   CARDS
+══════════════════════════════ */
+        .card {
+            background: var(--surface);
+            border-radius: var(--r);
+            border: 1.5px solid var(--border);
+            box-shadow: var(--sh-sm);
+            transition: box-shadow .18s, transform .18s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            box-shadow: var(--sh);
+        }
+
+        .cp {
+            padding: clamp(14px, 2.5vw, 20px);
+        }
+
+        .cpl {
+            padding: clamp(16px, 2.5vw, 24px);
+        }
+
+        .card-ai {
+            border-left: 4px solid var(--role-ai);
+        }
+
+        .card-inv {
+            border-left: 4px solid var(--role-inv);
+        }
+
+        .card-b2b {
+            border-left: 4px solid var(--role-b2b);
+        }
+
+        .card-sup {
+            border-left: 4px solid var(--role-sup);
+        }
+
+        .card-feed {
+            border-left: 4px solid var(--role-feed);
+        }
+
+        .card-danger {
+            border-left: 4px solid var(--danger);
+        }
+
+        .card-warn {
+            border-left: 4px solid var(--warn);
+        }
+
+        .card-success {
+            border-left: 4px solid var(--success);
+        }
+
+        /* ══════════════════════════════
+   KPI GRID
+══════════════════════════════ */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: clamp(10px, 2vw, 16px);
+            margin-bottom: clamp(16px, 3vw, 24px);
+        }
+
+        .kpi {
+            padding: clamp(14px, 2.5vw, 22px);
+            position: relative;
+            overflow: hidden;
+            cursor: default;
+        }
+
+        .kpi::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            right: -20px;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--kc, #6366f1);
+            opacity: .08;
+            filter: blur(15px);
+        }
+
+        .kpi-ico {
+            font-size: clamp(1.3rem, 3vw, 1.6rem);
+            margin-bottom: 10px;
+        }
+
+        .kpi-val {
+            font-family: var(--fm);
+            font-size: clamp(1.4rem, 3.5vw, 2rem);
+            font-weight: 700;
+            color: var(--kc, var(--role-ai));
+            line-height: 1;
+        }
+
+        .kpi-lbl {
+            font-size: clamp(.72rem, 1.8vw, .82rem);
+            color: var(--txt2);
+            margin-top: 7px;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .kpi-dt {
+            font-size: clamp(.65rem, 1.5vw, .72rem);
+            color: var(--txt3);
+            margin-top: 4px;
+        }
+
+        /* ══════════════════════════════
+   DATA SOURCE BAR
+══════════════════════════════ */
+        .dsbar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding: 10px 16px;
+            margin-bottom: 18px;
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+        }
+
+        .dslabel {
+            font-family: var(--fm);
+            font-size: .67rem;
+            color: var(--txt3);
+            font-weight: 600;
+            letter-spacing: .3px;
+            white-space: nowrap;
+        }
+
+        .dsbdg {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: #fff;
+            border: 1.5px solid var(--border);
+            font-size: .7rem;
+            font-weight: 500;
+            color: var(--txt2);
+            box-shadow: var(--sh-sm);
+            white-space: nowrap;
+        }
+
+        .dd {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            animation: blink 2s infinite;
+        }
+
+        .gr {
+            background: var(--success);
+        }
+
+        .te {
+            background: var(--role-b2b);
+        }
+
+        .pu {
+            background: var(--role-ai);
+        }
+
+        .cy {
+            background: #06b6d4;
+        }
+
+        .am {
+            background: var(--warn);
+        }
+
+        /* ══════════════════════════════
+   SECTION HEADER
+══════════════════════════════ */
+        .sec-h {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .h2 {
+            font-family: var(--fh);
+            font-size: clamp(.9rem, 2.5vw, 1rem);
+            font-weight: 700;
+            color: var(--txt);
+        }
+
+        .h3 {
+            font-family: var(--fh);
+            font-size: clamp(.82rem, 2.2vw, .88rem);
+            font-weight: 600;
+            color: var(--txt);
+        }
+
+        .sub {
+            font-size: clamp(.72rem, 1.8vw, .78rem);
+            color: var(--txt2);
+            margin-top: 3px;
+        }
+
+        .muted {
+            color: var(--txt3);
+            font-size: .7rem;
+        }
+
+        /* ══════════════════════════════
+   BADGES
+══════════════════════════════ */
+        .bdg {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 9px;
+            border-radius: 20px;
+            font-size: .68rem;
+            font-weight: 700;
+            border: 1.5px solid;
+            white-space: nowrap;
+        }
+
+        .b-r {
+            background: #fef2f2;
+            color: var(--danger);
+            border-color: #fecaca;
+        }
+
+        .b-a {
+            background: #fffbeb;
+            color: #b45309;
+            border-color: #fde68a;
+        }
+
+        .b-g {
+            background: #ecfdf5;
+            color: var(--success);
+            border-color: #a7f3d0;
+        }
+
+        .b-p {
+            background: var(--role-ai-lt);
+            color: var(--role-ai);
+            border-color: #c7d2fe;
+        }
+
+        .b-t {
+            background: var(--role-b2b-lt);
+            color: #059669;
+            border-color: #a7f3d0;
+        }
+
+        .b-c {
+            background: #ecfeff;
+            color: #0891b2;
+            border-color: #a5f3fc;
+        }
+
+        .b-n {
+            background: var(--surface2);
+            color: var(--txt2);
+            border-color: var(--border);
+        }
+
+        .b-s {
+            background: var(--role-sup-lt);
+            color: #1d4ed8;
+            border-color: #bfdbfe;
+        }
+
+        .b-f {
+            background: var(--role-feed-lt);
+            color: #be185d;
+            border-color: #fbcfe8;
+        }
+
+        /* Live badge */
+        .live {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            background: rgba(16, 185, 129, .08);
+            border: 1.5px solid rgba(16, 185, 129, .2);
+            color: var(--success);
+            font-size: .72rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        /* ══════════════════════════════
+   BUTTONS
+══════════════════════════════ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 9px 18px;
+            border-radius: 10px;
+            border: 1.5px solid;
+            font-family: var(--fb);
+            font-size: .83rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .16s;
+            text-decoration: none;
+            white-space: nowrap;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn:active {
+            transform: scale(.97);
+        }
+
+        .btn-ai {
+            background: var(--role-ai);
+            border-color: var(--role-ai);
+            color: #fff;
+            box-shadow: 0 3px 10px rgba(99, 102, 241, .3);
+        }
+
+        .btn-ai:hover {
+            background: #4f46e5;
+        }
+
+        .btn-p {
+            background: var(--role-ai);
+            border-color: var(--role-ai);
+            color: #fff;
+        }
+
+        .btn-p:hover {
+            background: #4f46e5;
+        }
+
+        .btn-inv {
+            background: var(--role-inv);
+            border-color: var(--role-inv);
+            color: #fff;
+        }
+
+        .btn-inv:hover {
+            background: #d97706;
+        }
+
+        .btn-t {
+            background: var(--role-b2b);
+            border-color: var(--role-b2b);
+            color: #fff;
+        }
+
+        .btn-t:hover {
+            background: #059669;
+        }
+
+        .btn-sup {
+            background: var(--role-sup);
+            border-color: var(--role-sup);
+            color: #fff;
+        }
+
+        .btn-sup:hover {
+            background: #2563eb;
+        }
+
+        .btn-feed {
+            background: var(--role-feed);
+            border-color: var(--role-feed);
+            color: #fff;
+            box-shadow: 0 3px 10px rgba(236, 72, 153, .25);
+        }
+
+        .btn-feed:hover {
+            background: #db2777;
+        }
+
+        .btn-g {
+            background: #fff;
+            border-color: var(--border);
+            color: var(--txt2);
+            box-shadow: var(--sh-sm);
+        }
+
+        .btn-g:hover {
+            border-color: var(--border2);
+            color: var(--txt);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            border-color: var(--danger);
+            color: #fff;
+        }
+
+        .sm {
+            padding: 6px 13px;
+            font-size: .76rem;
+            border-radius: 8px;
+        }
+
+        .xs {
+            padding: 4px 9px;
+            font-size: .7rem;
+            border-radius: 7px;
+        }
+
+        /* ══════════════════════════════
+   TABLE
+══════════════════════════════ */
+        .tw {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 0 0 12px 12px;
+        }
+
+        .tw table {
+            min-width: 580px;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .tbl th {
+            padding: 10px 12px;
+            text-align: left;
+            font-family: var(--fm);
+            font-size: .62rem;
+            font-weight: 600;
+            letter-spacing: .8px;
+            color: var(--txt3);
+            text-transform: uppercase;
+            border-bottom: 1.5px solid var(--border);
+            background: var(--surface2);
+            white-space: nowrap;
+        }
+
+        .tbl td {
+            padding: 11px 12px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+            font-size: .82rem;
+        }
+
+        .tbl tr {
+            transition: background .12s;
+        }
+
+        .tbl tr:hover td {
+            background: #fafbff;
+        }
+
+        .tbl tr.hl td {
+            background: rgba(99, 102, 241, .04);
+        }
+
+        .tbl tr:last-child td {
+            border-bottom: none;
+        }
+
+        .pn {
+            font-weight: 600;
+            font-size: .84rem;
+            color: var(--txt);
+        }
+
+        .pc {
+            font-size: .68rem;
+            color: var(--txt3);
+            margin-top: 2px;
+        }
+
+        /* Risk bar */
+        .rbw {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 100px;
+        }
+
+        .rbb {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--border);
+            overflow: hidden;
+        }
+
+        .rbf {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 1.3s cubic-bezier(.4, 0, .2, 1);
+        }
+
+        .rh .rbf {
+            background: linear-gradient(90deg, #fca5a5, var(--danger));
+        }
+
+        .rh .rbn {
+            color: var(--danger);
+        }
+
+        .rm .rbf {
+            background: linear-gradient(90deg, #fde68a, var(--warn));
+        }
+
+        .rm .rbn {
+            color: #b45309;
+        }
+
+        .rl .rbf {
+            background: linear-gradient(90deg, #6ee7b7, var(--success));
+        }
+
+        .rl .rbn {
+            color: var(--success);
+        }
+
+        .rbn {
+            font-family: var(--fm);
+            font-size: .8rem;
+            font-weight: 600;
+            min-width: 34px;
+        }
+
+        /* AI cell */
+        .aic {
+            font-size: .73rem;
+            color: var(--txt2);
+            line-height: 1.55;
+        }
+
+        .aic strong {
+            color: var(--role-ai);
+            display: block;
+            font-weight: 600;
+        }
+
+        .aic small {
+            color: var(--txt3);
+            font-size: .67rem;
+        }
+
+        /* ══════════════════════════════
+   CHIPS
+══════════════════════════════ */
+        .chips {
+            display: flex;
+            gap: 7px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+        }
+
+        .chip {
+            padding: 6px 13px;
+            border-radius: 20px;
+            border: 1.5px solid var(--border);
+            font-size: .76rem;
+            font-weight: 500;
+            cursor: pointer;
+            background: #fff;
+            color: var(--txt2);
+            transition: all .14s;
+            box-shadow: var(--sh-sm);
+            white-space: nowrap;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .chip:hover {
+            border-color: var(--border2);
+            color: var(--txt);
+        }
+
+        .chip.active {
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, .12);
+        }
+
+        .chip-ai.active {
+            background: var(--role-ai);
+        }
+
+        .chip-inv.active {
+            background: var(--role-inv);
+        }
+
+        .chip-b2b.active {
+            background: var(--role-b2b);
+        }
+
+        .chip-sup.active {
+            background: var(--role-sup);
+        }
+
+        .chip-feed.active {
+            background: var(--role-feed);
+        }
+
+        /* ══════════════════════════════
+   DASHBOARD LAYOUT
+══════════════════════════════ */
+        .dash-grid {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 18px;
+        }
+
+        .rp {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .srow {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .sv {
+            font-family: var(--fm);
+            font-size: 1.05rem;
+            font-weight: 700;
+        }
+
+        .sl {
+            font-size: .67rem;
+            color: var(--txt3);
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 12px 0;
+        }
+
+        .insight-card {
+            background: linear-gradient(135deg, var(--role-ai-lt), #e0e7ff);
+            border-color: #c7d2fe;
+        }
+
+        /* Chart bars */
+        .cbars {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            height: 120px;
+        }
+
+        .cbw {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            height: 100%;
+            justify-content: flex-end;
+        }
+
+        .cb {
+            width: 100%;
+            border-radius: 4px 4px 0 0;
+            min-height: 4px;
+            background: linear-gradient(180deg, var(--role-ai), rgba(99, 102, 241, .15));
+            transition: height 1.1s cubic-bezier(.4, 0, .2, 1);
+        }
+
+        .cb.ac {
+            background: linear-gradient(180deg, var(--role-b2b), rgba(16, 185, 129, .15));
+        }
+
+        .cbl {
+            font-size: .6rem;
+            color: var(--txt3);
+        }
+
+        .cbn {
+            font-family: var(--fm);
+            font-size: .6rem;
+            color: var(--txt2);
+            font-weight: 600;
+        }
+
+        /* ══════════════════════════════
+   SUPPLIER
+══════════════════════════════ */
+        .sg {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 14px;
+        }
+
+        .sc {
+            padding: clamp(14px, 2.5vw, 20px);
+            cursor: pointer;
+        }
+
+        .sico {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            margin-bottom: 12px;
+            flex-shrink: 0;
+        }
+
+        .sn {
+            font-family: var(--fh);
+            font-size: .88rem;
+            font-weight: 700;
+        }
+
+        .sm2 {
+            font-size: .71rem;
+            color: var(--txt3);
+            margin-top: 3px;
+        }
+
+        .sr {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .stars {
+            color: var(--warn);
+            font-size: .75rem;
+        }
+
+        .item-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            background: var(--surface2);
+            border-radius: 9px;
+            border: 1.5px solid var(--border);
+            transition: border-color .15s;
+        }
+
+        .item-row:hover {
+            border-color: var(--border2);
+        }
+
+        /* Orders */
+        .ol {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .oc {
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .oi {
+            font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+
+        .oin {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .onam {
+            font-weight: 600;
+            font-size: .84rem;
+        }
+
+        .osub {
+            font-size: .7rem;
+            color: var(--txt3);
+            margin-top: 2px;
+        }
+
+        .oac {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .esc-h {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 11px;
+            border-radius: 20px;
+            background: #fffbeb;
+            border: 1.5px solid #fde68a;
+            color: #b45309;
+            font-size: .72rem;
+            font-weight: 700;
+        }
+
+        .esc-d {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 11px;
+            border-radius: 20px;
+            background: #ecfdf5;
+            border: 1.5px solid #a7f3d0;
+            color: var(--success);
+            font-size: .72rem;
+            font-weight: 700;
+        }
+
+        /* Supplier portal */
+        .spg {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        /* ══════════════════════════════
+   DEAL FEED CARDS
+══════════════════════════════ */
+        .dg {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(clamp(160px, 28vw, 240px), 1fr));
+            gap: clamp(10px, 2vw, 16px);
+        }
+
+        .dc {
+            padding: 0;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform .18s, box-shadow .18s;
+        }
+
+        .dc:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--sh-lg);
+        }
+
+        .dc:active {
+            transform: scale(.98);
+        }
+
+        .dt {
+            height: clamp(90px, 18vw, 110px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(2rem, 8vw, 3rem);
+            background: linear-gradient(135deg, var(--role-feed-lt), #fce7f3);
+            border-bottom: 1.5px solid var(--border);
+            position: relative;
+        }
+
+        .dp {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            font-family: var(--fm);
+            font-size: .68rem;
+            background: var(--role-feed);
+            color: #fff;
+            padding: 3px 9px;
+            border-radius: 20px;
+            font-weight: 700;
+            box-shadow: 0 2px 6px rgba(236, 72, 153, .3);
+        }
+
+        .db {
+            padding: clamp(10px, 2vw, 14px);
+        }
+
+        .dtl {
+            font-weight: 700;
+            font-size: clamp(.8rem, 2.2vw, .86rem);
+            margin-bottom: 4px;
+            font-family: var(--fh);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .dst {
+            font-size: clamp(.65rem, 1.7vw, .71rem);
+            color: var(--txt3);
+            margin-bottom: 8px;
+        }
+
+        .dpr {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .dpo {
+            font-size: .73rem;
+            color: var(--txt3);
+            text-decoration: line-through;
+        }
+
+        .dpn {
+            font-family: var(--fm);
+            font-size: clamp(1rem, 3vw, 1.15rem);
+            color: var(--role-feed);
+            font-weight: 700;
+        }
+
+        .dcd {
+            font-size: .68rem;
+            color: #d97706;
+            margin-top: 6px;
+        }
+
+        .ddi {
+            font-size: .67rem;
+            color: var(--txt3);
+            margin-top: 3px;
+        }
+
+        /* Store rating mini */
+        .store-rating-mini {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 5px;
+        }
+
+        .star-mini {
+            color: var(--warn);
+            font-size: .72rem;
+        }
+
+        .rating-num {
+            font-family: var(--fm);
+            font-size: .7rem;
+            font-weight: 600;
+            color: var(--txt2);
+        }
+
+        .review-cnt {
+            font-size: .65rem;
+            color: var(--txt3);
+        }
+
+        /* ══════════════════════════════
+   MODAL OVERLAY
+══════════════════════════════ */
+        .ov {
+            position: fixed;
+            inset: 0;
+            z-index: 500;
+            background: rgba(0, 0, 0, .45);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: clamp(8px, 3vw, 20px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .24s;
+        }
+
+        .ov.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        /* Base modal */
+        .modal {
+            background: #fff;
+            border-radius: clamp(14px, 3vw, 18px);
+            width: 100%;
+            max-width: 460px;
+            box-shadow: var(--sh-lg);
+            border: 1.5px solid var(--border);
+            transform: scale(.96) translateY(12px);
+            transition: all .24s;
+            max-height: 90vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .ov.open .modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-inner {
+            padding: clamp(18px, 3vw, 28px);
+        }
+
+        /* Modal headers */
+        .mtl {
+            font-family: var(--fh);
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .rdisp {
+            text-align: center;
+            padding: 14px 0;
+        }
+
+        .rnum {
+            font-family: var(--fm);
+            font-size: 3.2rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .rlbl {
+            font-size: .76rem;
+            color: var(--txt2);
+            margin-top: 6px;
+        }
+
+        /* Form elements */
+        .fr {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .fg {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .fl2 {
+            font-size: .68rem;
+            color: var(--txt2);
+            font-weight: 600;
+            letter-spacing: .3px;
+            text-transform: uppercase;
+        }
+
+        .fi {
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            border-radius: 9px;
+            padding: 10px 13px;
+            color: var(--txt);
+            font-family: var(--fb);
+            font-size: .84rem;
+            outline: none;
+            transition: border-color .2s, box-shadow .2s;
+            width: 100%;
+        }
+
+        .fi:focus {
+            border-color: var(--role-ai);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, .12);
+        }
+
+        .ff {
+            grid-column: 1/-1;
+        }
+
+        .ma {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        /* ══════════════════════════════
+   STORE DETAIL MODAL (large)
+══════════════════════════════ */
+        .modal-store {
+            max-width: 600px;
+        }
+
+        .store-hero {
+            height: clamp(120px, 20vw, 160px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(3rem, 10vw, 5rem);
+            background: linear-gradient(135deg, #fdf2f8, #fce7f3, #fbcfe8);
+            position: relative;
+            border-radius: clamp(12px, 3vw, 16px) clamp(12px, 3vw, 16px) 0 0;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .store-hero::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, transparent 50%, rgba(255, 255, 255, .4));
+        }
+
+        .store-body {
+            padding: clamp(14px, 3vw, 22px);
+        }
+
+        .store-meta {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+        }
+
+        .store-name {
+            font-family: var(--fh);
+            font-size: clamp(1rem, 3vw, 1.25rem);
+            font-weight: 700;
+        }
+
+        .store-cat {
+            font-size: .75rem;
+            color: var(--txt2);
+            margin-top: 3px;
+        }
+
+        .store-stats {
+            display: flex;
+            gap: clamp(10px, 2vw, 18px);
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+            padding: 12px;
+            background: var(--surface2);
+            border-radius: 10px;
+            border: 1.5px solid var(--border);
+        }
+
+        .s-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            flex: 1;
+            min-width: 60px;
+        }
+
+        .s-val {
+            font-family: var(--fm);
+            font-size: clamp(.9rem, 2.5vw, 1.1rem);
+            font-weight: 700;
+            color: var(--txt);
+        }
+
+        .s-lbl {
+            font-size: .63rem;
+            color: var(--txt3);
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        /* Star rating input */
+        .star-input {
+            display: flex;
+            gap: 4px;
+        }
+
+        .star-btn {
+            font-size: 1.4rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #d1d5db;
+            transition: all .15s;
+            padding: 2px;
+        }
+
+        .star-btn.active {
+            color: var(--warn);
+        }
+
+        .star-btn:hover {
+            transform: scale(1.2);
+        }
+
+        /* Reviews */
+        .reviews-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 280px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .review-item {
+            padding: 11px 13px;
+            background: var(--surface2);
+            border-radius: 10px;
+            border: 1.5px solid var(--border);
+        }
+
+        .rv-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .rv-user {
+            font-weight: 600;
+            font-size: .78rem;
+        }
+
+        .rv-stars {
+            color: var(--warn);
+            font-size: .75rem;
+        }
+
+        .rv-date {
+            font-size: .65rem;
+            color: var(--txt3);
+        }
+
+        .rv-text {
+            font-size: .78rem;
+            color: var(--txt2);
+            line-height: 1.55;
+        }
+
+        .rv-coupon {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 6px;
+            font-size: .68rem;
+            color: var(--success);
+            background: var(--role-b2b-lt);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        /* Rating bars */
+        .rating-bars {
+            margin-bottom: 14px;
+        }
+
+        .rb-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 5px;
+        }
+
+        .rb-lbl {
+            font-size: .7rem;
+            color: var(--txt3);
+            width: 14px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .rb-track {
+            flex: 1;
+            height: 5px;
+            border-radius: 3px;
+            background: var(--border);
+            overflow: hidden;
+        }
+
+        .rb-fill {
+            height: 100%;
+            border-radius: 3px;
+            background: var(--warn);
+            transition: width .6s ease;
+        }
+
+        .rb-cnt {
+            font-size: .66rem;
+            color: var(--txt3);
+            width: 20px;
+            flex-shrink: 0;
+        }
+
+        /* Coupon */
+        .coupon-card {
+            border: 2px dashed var(--role-feed);
+            border-radius: 12px;
+            padding: 14px 16px;
+            background: linear-gradient(135deg, #fff5f9, #fdf2f8);
+            position: relative;
+            overflow: hidden;
+            margin: 12px 0;
+        }
+
+        .coupon-card::before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            background: var(--bg);
+            border-radius: 50%;
+        }
+
+        .coupon-card::after {
+            content: '';
+            position: absolute;
+            right: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            background: var(--bg);
+            border-radius: 50%;
+        }
+
+        .coupon-code {
+            font-family: var(--fm);
+            font-size: clamp(1.1rem, 4vw, 1.4rem);
+            font-weight: 700;
+            color: var(--role-feed);
+            letter-spacing: 3px;
+            text-align: center;
+            margin: 6px 0;
+        }
+
+        .coupon-discount {
+            text-align: center;
+            font-family: var(--fh);
+            font-size: clamp(.85rem, 2.5vw, 1rem);
+            font-weight: 600;
+            color: var(--txt);
+        }
+
+        .coupon-detail {
+            text-align: center;
+            font-size: .72rem;
+            color: var(--txt2);
+            margin-top: 4px;
+        }
+
+        .coupon-exp {
+            text-align: center;
+            font-size: .67rem;
+            color: var(--txt3);
+            margin-top: 3px;
+        }
+
+        .copied-badge {
+            display: none;
+            position: absolute;
+            inset: 0;
+            background: rgba(16, 185, 129, .9);
+            border-radius: 10px;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1rem;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .coupon-card.copied .copied-badge {
+            display: flex;
+        }
+
+        /* My coupons */
+        .my-coupons-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .my-coupon {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 10px 13px;
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            flex-wrap: wrap;
+        }
+
+        .mc-left {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .mc-code {
+            font-family: var(--fm);
+            font-weight: 700;
+            font-size: .84rem;
+            color: var(--role-feed);
+        }
+
+        .mc-desc {
+            font-size: .72rem;
+            color: var(--txt2);
+        }
+
+        .mc-exp {
+            font-size: .65rem;
+            color: var(--txt3);
+        }
+
+        .mc-used {
+            opacity: .5;
+        }
+
+        .mc-status {
+            font-family: var(--fm);
+            font-size: .65rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 700;
+        }
+
+        .mc-active {
+            background: var(--role-b2b-lt);
+            color: var(--success);
+        }
+
+        .mc-expired {
+            background: #fef2f2;
+            color: var(--danger);
+        }
+
+        /* ══════════════════════════════
+   TOAST
+══════════════════════════════ */
+        .tc {
+            position: fixed;
+            bottom: clamp(70px, 12vw, 24px);
+            right: clamp(10px, 3vw, 24px);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-end;
+        }
+
+        .toast {
+            padding: 11px 16px;
+            border-radius: 12px;
+            font-size: .78rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            max-width: min(310px, 90vw);
+            animation: tin .24s ease;
+            box-shadow: var(--sh);
+            background: #fff;
+            border: 1.5px solid var(--border);
+        }
+
+        .ts {
+            border-color: #a7f3d0;
+            background: #ecfdf5;
+            color: #059669;
+        }
+
+        .ti {
+            border-color: #c7d2fe;
+            background: var(--role-ai-lt);
+            color: var(--role-ai);
+        }
+
+        @keyframes tin {
+            from {
+                opacity: 0;
+                transform: translateX(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Cart bar */
+        .cbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 280;
+            padding: 12px clamp(14px, 3vw, 28px);
+            padding-bottom: calc(12px + env(safe-area-inset-bottom, 0));
+            background: rgba(255, 255, 255, .98);
+            border-top: 2px solid var(--role-feed);
+            box-shadow: 0 -4px 20px rgba(236, 72, 153, .12);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            transform: translateY(100%);
+            transition: transform .3s;
+        }
+
+        .cbar.show {
+            transform: translateY(0);
+        }
+
+        /* ══════════════════════════════
+   RESPONSIVE
+══════════════════════════════ */
+        @media(max-width:1100px) {
+            .dash-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media(max-width:900px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .spg {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ── TABLET & MOBILE BASE ── */
+        @media(max-width:768px) {
+            :root {
+                --nav-h: 56px;
+                --mob-nav-h: 64px;
+                --r: 12px;
+            }
+
+            /* Topbar */
+            .topbar {
+                height: var(--nav-h);
+                padding: 0 14px;
+                gap: 8px;
+            }
+
+            .logo {
+                font-size: 1.1rem;
+                gap: 6px;
+            }
+
+            .nav-desktop {
+                display: none;
+            }
+
+            .ham {
+                display: none;
+            }
+
+            .clk-wrap {
+                display: none;
+            }
+
+            /* Mobile bottom nav — refined */
+            .mob-bottom-nav {
+                display: flex;
+                width: 100%;
+                height: var(--mob-nav-h);
+                padding: 0 8px;
+                padding-bottom: env(safe-area-inset-bottom, 0);
+                background: rgba(255, 255, 255, .98);
+                border-top: 1px solid var(--border);
+                box-shadow: 0 -2px 16px rgba(0, 0, 0, .07);
+            }
+
+            .mob-nav-grid {
+                width: 100%;
+                align-items: center;
+            }
+
+            .mn {
+                font-size: .6rem;
+                gap: 4px;
+                padding: 6px 4px;
+                border-radius: 12px;
+                margin: 4px 2px;
+                position: relative;
+                transition: all .2s;
+            }
+
+            .mn-ico {
+                font-size: 1.28rem;
+                transition: transform .2s;
+            }
+
+            .mn.active {
+                background: var(--bg);
+            }
+
+            .mn.active .mn-ico {
+                transform: scale(1.18) translateY(-1px);
+            }
+
+            /* Active indicator dot */
+            .mn.active::after {
+                content: '';
+                position: absolute;
+                bottom: 4px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 4px;
+                height: 4px;
+                border-radius: 50%;
+                background: var(--mc, var(--role-ai));
+                display: block;
+            }
+
+            /* Page padding */
+            .page {
+                padding: 14px 12px;
+                padding-bottom: calc(var(--mob-nav-h) + 18px + env(safe-area-inset-bottom, 0));
+            }
+
+            .cbar {
+                padding-bottom: calc(10px + var(--mob-nav-h) + env(safe-area-inset-bottom, 0));
+            }
+
+            .tc {
+                bottom: calc(var(--mob-nav-h) + 14px);
+                right: 12px;
+            }
+
+            /* Page header — compact */
+            .ph {
+                margin-bottom: 14px;
+                padding-bottom: 14px;
+                gap: 10px;
+            }
+
+            .ph-title {
+                font-size: 1.2rem;
+            }
+
+            .ph-sub {
+                font-size: .74rem;
+                margin-top: 3px;
+            }
+
+            .ph-role {
+                font-size: .62rem;
+                margin-bottom: 5px;
+            }
+
+            .ph-actions {
+                width: 100%;
+                gap: 6px;
+            }
+
+            .ph-actions .btn {
+                flex: 1;
+                justify-content: center;
+                font-size: .76rem;
+                padding: 8px 10px;
+            }
+
+            /* Data source bar */
+            .dsbar {
+                padding: 8px 10px;
+                gap: 6px;
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+                margin-bottom: 14px;
+                border-radius: 10px;
+            }
+
+            .dsbar::-webkit-scrollbar {
+                display: none;
+            }
+
+            .dsbdg {
+                font-size: .67rem;
+                padding: 3px 8px;
+            }
+
+            .dslabel {
+                font-size: .62rem;
+            }
+
+            /* KPI grid */
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+                margin-bottom: 14px;
+            }
+
+            .kpi {
+                padding: 14px 12px 14px 16px;
+            }
+
+            .kpi-ico {
+                font-size: 1.2rem;
+                margin-bottom: 8px;
+            }
+
+            .kpi-val {
+                font-size: 1.55rem;
+            }
+
+            .kpi-lbl {
+                font-size: .72rem;
+                margin-top: 6px;
+            }
+
+            .kpi-dt {
+                font-size: .62rem;
+            }
+
+            /* Cards */
+            .cp {
+                padding: 14px;
+            }
+
+            .cpl {
+                padding: 14px;
+            }
+
+            .card {
+                border-radius: 12px;
+            }
+
+            /* Section header */
+            .sec-h {
+                margin-bottom: 10px;
+            }
+
+            .h2 {
+                font-size: .92rem;
+            }
+
+            .h3 {
+                font-size: .84rem;
+            }
+
+            /* Table scroll */
+            .tw {
+                position: relative;
+                border-radius: 0 0 10px 10px;
+            }
+
+            .tw::before {
+                content: '← เลื่อนดูข้อมูลเพิ่ม →';
+                display: block;
+                text-align: center;
+                font-size: .6rem;
+                color: var(--txt3);
+                padding: 4px 0 6px;
+                letter-spacing: .3px;
+            }
+
+            .tbl th {
+                padding: 8px 10px;
+                font-size: .6rem;
+            }
+
+            .tbl td {
+                padding: 9px 10px;
+                font-size: .78rem;
+            }
+
+            /* Chips */
+            .chips {
+                gap: 6px;
+                margin-bottom: 12px;
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                scrollbar-width: none;
+                padding-bottom: 2px;
+            }
+
+            .chips::-webkit-scrollbar {
+                display: none;
+            }
+
+            .chip {
+                padding: 5px 12px;
+                font-size: .72rem;
+                flex-shrink: 0;
+            }
+
+            /* Supplier grid */
+            .sg {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .sc {
+                padding: 12px;
+            }
+
+            .sico {
+                width: 38px;
+                height: 38px;
+                font-size: 1.1rem;
+                margin-bottom: 8px;
+            }
+
+            .sn {
+                font-size: .82rem;
+            }
+
+            .sm2 {
+                font-size: .68rem;
+            }
+
+            /* Deal feed cards */
+            .dg {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .dt {
+                height: 80px;
+                font-size: 2.2rem;
+            }
+
+            .db {
+                padding: 10px;
+            }
+
+            .dtl {
+                font-size: .78rem;
+            }
+
+            .dst {
+                font-size: .63rem;
+            }
+
+            .dpn {
+                font-size: 1rem;
+            }
+
+            .dcd {
+                font-size: .63rem;
+            }
+
+            /* Orders */
+            .oc {
+                padding: 12px;
+                gap: 10px;
+            }
+
+            .oi {
+                font-size: 1.2rem;
+            }
+
+            .onam {
+                font-size: .8rem;
+            }
+
+            .osub {
+                font-size: .67rem;
+            }
+
+            .oac {
+                gap: 6px;
+            }
+
+            /* Item rows */
+            .item-row {
+                padding: 8px 10px;
+            }
+
+            /* Modals slide up from bottom */
+            .ov {
+                align-items: flex-end;
+                padding: 0;
+            }
+
+            .modal {
+                border-radius: 20px 20px 0 0;
+                max-height: 92vh;
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .ov.open .modal {
+                transform: scale(1) translateY(0);
+            }
+
+            .modal-inner {
+                padding: 20px 16px;
+            }
+
+            /* Store modal */
+            .modal-store {
+                max-width: 100%;
+            }
+
+            .store-hero {
+                height: 110px;
+                font-size: 3.5rem;
+                border-radius: 20px 20px 0 0;
+            }
+
+            .store-body {
+                padding: 14px 16px;
+            }
+
+            .store-stats {
+                gap: 8px;
+                padding: 10px;
+                border-radius: 9px;
+            }
+
+            .s-val {
+                font-size: .9rem;
+            }
+
+            .s-lbl {
+                font-size: .6rem;
+            }
+
+            /* Spg (supplier portal) */
+            .spg {
+                gap: 12px;
+            }
+        }
+
+        /* ── SMALL MOBILE ── */
+        @media(max-width:480px) {
+            :root {
+                --mob-nav-h: 60px;
+            }
+
+            .page {
+                padding: 12px 10px;
+                padding-bottom: calc(var(--mob-nav-h) + 16px + env(safe-area-inset-bottom, 0));
+            }
+
+            /* KPI: keep 2-col but tighter */
+            .kpi-grid {
+                gap: 8px;
+            }
+
+            .kpi {
+                padding: 12px 10px 12px 14px;
+            }
+
+            .kpi-val {
+                font-size: 1.35rem;
+            }
+
+            /* 1-col supplier on very small */
+            .sg {
+                grid-template-columns: 1fr;
+            }
+
+            /* Deal grid stays 2-col but smaller */
+            .dg {
+                gap: 8px;
+            }
+
+            /* Form fields */
+            .fr {
+                grid-template-columns: 1fr;
+            }
+
+            .ma {
+                flex-direction: column-reverse;
+            }
+
+            .ma .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .ph-actions {
+                width: 100%;
+            }
+
+            /* Charts */
+            .cbars {
+                height: 90px;
+            }
+
+            .cbl,
+            .cbn {
+                font-size: .55rem;
+            }
+
+            /* Coupon */
+            .coupon-code {
+                font-size: 1.1rem;
+                letter-spacing: 2px;
+            }
+
+            /* Review items */
+            .review-item {
+                padding: 10px 11px;
+            }
+
+            .rv-header {
+                gap: 4px;
+            }
+
+            .rv-user {
+                font-size: .74rem;
+            }
+
+            /* Toast */
+            .toast {
+                padding: 9px 14px;
+                font-size: .74rem;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border2);
+            border-radius: 3px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+
+        <!-- ── TOPBAR ── -->
+        <div class="topbar">
+            <div class="logo">🥬 FreshLink <span class="logo-badge">v3</span></div>
+            <nav class="nav-desktop" id="navDesktop">
+                <button class="nt active" data-page="dashboard" onclick="nav('dashboard')">🤖 AI Dashboard</button>
+                <button class="nt" data-page="inventory" onclick="nav('inventory')">📦 Inventory</button>
+                <button class="nt" data-page="b2b" onclick="nav('b2b')">🏪 B2B Market</button>
+                <button class="nt" data-page="supplier" onclick="nav('supplier')">🚚 Supplier</button>
+                <button class="nt" data-page="feed" onclick="nav('feed')">🛒 Deal Feed</button>
+            </nav>
+            <div class="topbar-right">
+                <div class="clk-wrap">
+                    <div class="sdot"></div><span id="clk"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Bottom Nav -->
+        <nav class="mob-bottom-nav">
+            <div class="mob-nav-grid">
+                <button class="mn active" data-page="dashboard" onclick="nav('dashboard')"><span
+                        class="mn-ico">🤖</span>Dashboard</button>
+                <button class="mn" data-page="inventory" onclick="nav('inventory')"><span
+                        class="mn-ico">📦</span>สต็อก</button>
+                <button class="mn" data-page="b2b" onclick="nav('b2b')"><span class="mn-ico">🏪</span>B2B</button>
+                <button class="mn" data-page="supplier" onclick="nav('supplier')"><span
+                        class="mn-ico">🚚</span>Supplier</button>
+                <button class="mn" data-page="feed" onclick="nav('feed')"><span class="mn-ico">🛒</span>Deals</button>
+            </div>
+        </nav>
+
+        <!-- ═════════════════════════════════════
+     PAGE: DASHBOARD
+════════════════════════════════════= -->
+        <div class="page active" id="page-dashboard">
+            <div class="ph ph-ai">
+                <div>
+                    <div class="ph-role role-ai">🤖 AI SYSTEM &amp; STORE MANAGER</div>
+                    <div class="ph-title">⚡ AI Waste Risk Dashboard</div>
+                    <div class="ph-sub">วิเคราะห์ความเสี่ยงสินค้าเสียด้วย AI แบบ real-time</div>
+                </div>
+                <div class="ph-actions">
+                    <div class="live"><span>●</span> LIVE</div>
+                    <button class="btn btn-ai sm" onclick="refreshRisk()">🔄 Refresh AI</button>
+                </div>
+            </div>
+
+            <div class="dsbar">
+                <span class="dslabel">📡 CONNECTED:</span>
+                <div class="dsbdg">
+                    <div class="dd gr"></div>POS System
+                </div>
+                <div class="dsbdg">
+                    <div class="dd te"></div>Inventory DB
+                </div>
+                <div class="dsbdg">
+                    <div class="dd pu"></div>Supplier
+                </div>
+                <div class="dsbdg">
+                    <div class="dd cy"></div>GPS
+                </div>
+                <div class="dsbdg">
+                    <div class="dd am"></div>Expiry DB
+                </div>
+                <div style="margin-left:auto;font-family:var(--fm);font-size:.68rem;color:var(--txt3)" id="liveTs">
+                </div>
+            </div>
+
+            <div class="kpi-grid">
+                <div class="card kpi card-danger" style="--kc:var(--danger)">
+                    <div class="kpi-ico">⚠️</div>
+                    <div class="kpi-val" id="kpi-risky">4</div>
+                    <div class="kpi-lbl">SKU เสี่ยงวันนี้</div>
+                    <div class="kpi-dt">↑ 2 จากเมื่อวาน</div>
+                </div>
+                <div class="card kpi card-ai" style="--kc:var(--role-ai)">
+                    <div class="kpi-ico">💰</div>
+                    <div class="kpi-val" id="kpi-save">฿1,240</div>
+                    <div class="kpi-lbl">ประหยัดได้จาก deal</div>
+                    <div class="kpi-dt">↑ realtime</div>
+                </div>
+                <div class="card kpi card-b2b" style="--kc:var(--role-b2b)">
+                    <div class="kpi-ico">🏷️</div>
+                    <div class="kpi-val" id="kpi-deals">2</div>
+                    <div class="kpi-lbl">Deal Active</div>
+                    <div class="kpi-dt">→ Push แล้ว</div>
+                </div>
+                <div class="card kpi card-inv" style="--kc:var(--role-inv)">
+                    <div class="kpi-ico">🤝</div>
+                    <div class="kpi-val">3</div>
+                    <div class="kpi-lbl">Supplier พร้อม</div>
+                    <div class="kpi-dt">→ 1.8 กม.</div>
+                </div>
+            </div>
+
+            <div class="dash-grid">
+                <div class="card cpl card-ai">
+                    <div class="sec-h">
+                        <div>
+                            <div class="h2">🔴 Waste Risk Monitor</div>
+                            <div class="sub">AI วิเคราะห์ stock × expiry × ยอดขาย</div>
+                        </div>
+                    </div>
+                    <div class="tw">
+                        <table class="tbl">
+                            <thead>
+                                <tr>
+                                    <th>สินค้า</th>
+                                    <th>Stock</th>
+                                    <th>หมดอายุ</th>
+                                    <th>Risk</th>
+                                    <th>AI แนะนำ</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="riskTbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="rp">
+                    <div class="card cp card-ai">
+                        <div class="h3" style="margin-bottom:4px">📊 Top Risk SKUs</div>
+                        <div class="muted" style="margin-bottom:12px">7 วันย้อนหลัง</div>
+                        <div class="cbars" id="riskChart"></div>
+                        <div style="display:flex;gap:12px;margin-top:8px">
+                            <div style="display:flex;align-items:center;gap:4px;font-size:.66rem;color:var(--txt3)">
+                                <div style="width:7px;height:7px;border-radius:2px;background:var(--role-ai)"></div>Risk
+                            </div>
+                            <div style="display:flex;align-items:center;gap:4px;font-size:.66rem;color:var(--txt3)">
+                                <div style="width:7px;height:7px;border-radius:2px;background:var(--role-b2b)"></div>
+                                Deal
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card cp insight-card card-ai">
+                        <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px"><span>🧠</span>
+                            <div class="h3">AI Insight</div>
+                            <div class="bdg b-p" style="margin-left:auto;font-family:var(--fm);font-size:.62rem">LIVE
+                            </div>
+                        </div>
+                        <div style="font-size:.78rem;color:var(--txt2);line-height:1.7">พบ <strong
+                                style="color:var(--role-ai)">4
+                                SKU</strong> เสี่ยงสูง ควรสร้าง deal ใน <strong style="color:#b45309">2 ชม.</strong>
+                            เพิ่มรายได้ <strong style="color:var(--role-b2b)">฿1,240</strong></div>
+                        <div class="divider"></div>
+                        <div class="srow">
+                            <div class="stat">
+                                <div class="sv" style="color:var(--danger)">91%</div>
+                                <div class="sl">Max Risk</div>
+                            </div>
+                            <div class="stat">
+                                <div class="sv" style="color:var(--role-ai)">63%</div>
+                                <div class="sl">Avg Risk</div>
+                            </div>
+                            <div class="stat">
+                                <div class="sv" style="color:#b45309">1.4d</div>
+                                <div class="sl">Avg Expiry</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card cp card-b2b">
+                        <div class="h3" style="margin-bottom:10px">🚚 Supplier ใกล้เคียง</div>
+                        <div style="display:flex;flex-direction:column;gap:8px">
+                            <div class="item-row">
+                                <div>
+                                    <div style="font-size:.8rem;font-weight:600">ฟาร์มผักสด บางบัวทอง</div>
+                                    <div class="muted">ผักบุ้ง 50kg · 3.2 กม.</div>
+                                </div><button class="btn btn-t xs" onclick="nav('b2b')">สั่งซื้อ</button>
+                            </div>
+                            <div class="item-row">
+                                <div>
+                                    <div style="font-size:.8rem;font-weight:600">ครัวหมูปิ้ง ลุงแดง</div>
+                                    <div class="muted">200 ไม้ · 1.8 กม.</div>
+                                </div><button class="btn btn-t xs" onclick="nav('b2b')">สั่งซื้อ</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═════════════════════════════════════
+     PAGE: INVENTORY
+════════════════════════════════════= -->
+        <div class="page" id="page-inventory">
+            <div class="ph ph-inv">
+                <div>
+                    <div class="ph-role role-inv">📦 STORE STAFF &amp; MANAGER</div>
+                    <div class="ph-title">📦 Inventory Management</div>
+                    <div class="ph-sub">จัดการสต็อกและสร้าง deal สำหรับสินค้าเสี่ยง</div>
+                </div>
+                <div class="ph-actions"><button class="btn btn-g sm" onclick="nav('dashboard')">← Dashboard</button>
+                </div>
+            </div>
+            <div class="dsbar">
+                <span class="dslabel">📡</span>
+                <div class="dsbdg">
+                    <div class="dd gr"></div>POS
+                </div>
+                <div class="dsbdg">
+                    <div class="dd te"></div>Inventory DB
+                </div>
+                <div class="dsbdg">
+                    <div class="dd pu"></div>Expiry DB
+                </div>
+            </div>
+            <div class="chips" id="invChips">
+                <button class="chip chip-inv active" onclick="setInvF('all',this)">ทั้งหมด (10)</button>
+                <button class="chip chip-inv" onclick="setInvF('high',this)">⚠️ เสี่ยงสูง</button>
+                <button class="chip chip-inv" onclick="setInvF('deal',this)">🏷️ มี Deal</button>
+                <button class="chip chip-inv" onclick="setInvF('low',this)">✅ ปลอดภัย</button>
+            </div>
+            <div class="card cpl card-inv">
+                <div class="tw">
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th>สินค้า</th>
+                                <th>หมวด</th>
+                                <th>Stock</th>
+                                <th>หมดอายุ</th>
+                                <th>Risk</th>
+                                <th>ราคา</th>
+                                <th>สถานะ</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="invTbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═════════════════════════════════════
+     PAGE: B2B
+════════════════════════════════════= -->
+        <div class="page" id="page-b2b">
+            <div class="ph ph-b2b">
+                <div>
+                    <div class="ph-role role-b2b">🏪 BUYER &amp; STORE MANAGER</div>
+                    <div class="ph-title">🏪 B2B Marketplace</div>
+                    <div class="ph-sub">สั่งวัตถุดิบจาก supplier พร้อมระบบ Escrow ปลอดภัย</div>
+                </div>
+                <div class="ph-actions">
+                    <div class="bdg b-a" id="cartCnt" style="display:none">🛒 0</div>
+                    <button class="btn btn-t sm" id="checkBtn" style="display:none" onclick="checkoutB2B()">💰
+                        Checkout</button>
+                </div>
+            </div>
+            <div class="dsbar">
+                <span class="dslabel">📡</span>
+                <div class="dsbdg">
+                    <div class="dd pu"></div>Supplier Stock
+                </div>
+                <div class="dsbdg">
+                    <div class="dd cy"></div>GPS
+                </div>
+                <div class="dsbdg">
+                    <div class="dd te"></div>Escrow
+                </div>
+            </div>
+            <div id="activeOrds" style="margin-bottom:18px;display:none">
+                <div class="h3" style="margin-bottom:10px">📋 Order รอดำเนินการ</div>
+                <div class="ol" id="ordList"></div>
+            </div>
+            <div class="h3" style="margin-bottom:12px">🏪 Supplier พร้อมส่ง</div>
+            <div class="sg" id="supGrid"></div>
+        </div>
+
+        <!-- ═════════════════════════════════════
+     PAGE: SUPPLIER
+════════════════════════════════════= -->
+        <div class="page" id="page-supplier">
+            <div class="ph ph-sup">
+                <div>
+                    <div class="ph-role role-sup">🚚 SUPPLIER PARTNER</div>
+                    <div class="ph-title">🚚 Supplier Portal</div>
+                    <div class="ph-sub">จัดการสินค้า · รับ Order · ดู Escrow · ยืนยันส่งมอบ</div>
+                </div>
+                <div class="ph-actions">
+                    <div class="bdg b-g" id="newOrdBdg" style="display:none">🔔 NEW ORDER!</div>
+                    <button class="btn btn-sup sm" onclick="openCouponMgr()">🎟 จัดการคูปอง</button>
+                </div>
+            </div>
+            <div class="dsbar">
+                <span class="dslabel">📡</span>
+                <div class="dsbdg">
+                    <div class="dd te"></div>Escrow Wallet
+                </div>
+                <div class="dsbdg">
+                    <div class="dd cy"></div>GPS
+                </div>
+            </div>
+            <div class="spg">
+                <div class="card cpl card-sup">
+                    <div class="h3" style="margin-bottom:12px">📦 สินค้าของฉัน</div>
+                    <div id="supProd" style="display:flex;flex-direction:column;gap:8px"></div>
+                </div>
+                <div class="card cpl card-sup">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+                        <div class="h3">📥 Order Inbox</div>
+                        <div class="bdg b-s" id="inboxCnt">0</div>
+                    </div>
+                    <div id="supOrds">
+                        <div style="color:var(--txt3);font-size:.8rem;text-align:center;padding:36px">ยังไม่มี order
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Coupon stats for supplier -->
+            <div style="margin-top:18px">
+                <div class="h3" style="margin-bottom:12px">🎟 คูปองที่ออกไป</div>
+                <div class="card cpl card-sup" id="supCouponStats">
+                    <div style="color:var(--txt3);font-size:.8rem;text-align:center;padding:24px">ยังไม่มีคูปองที่ถูกใช้
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═════════════════════════════════════
+     PAGE: DEAL FEED
+════════════════════════════════════= -->
+        <div class="page" id="page-feed">
+            <div class="ph ph-feed">
+                <div>
+                    <div class="ph-role role-feed">🛒 END CUSTOMER</div>
+                    <div class="ph-title">🛒 Deal Feed</div>
+                    <div class="ph-sub">ดีลสินค้าราคาพิเศษ ใกล้หมดอายุ · <span id="dealCnt">0</span> ดีล</div>
+                </div>
+                <div class="ph-actions">
+                    <button class="btn btn-g sm" onclick="openMyCoupons()">🎟 คูปองของฉัน <span id="myCouponBadge"
+                            style="display:none;background:var(--role-feed);color:#fff;border-radius:10px;padding:1px 6px;font-size:.65rem;margin-left:2px"></span></button>
+                </div>
+            </div>
+            <div class="chips" id="feedChips">
+                <button class="chip chip-feed active" onclick="setFeedF('all',this)">🌟 ทั้งหมด</button>
+                <button class="chip chip-feed" onclick="setFeedF('เบเกอรี่',this)">🥐 เบเกอรี่</button>
+                <button class="chip chip-feed" onclick="setFeedF('นม',this)">🥛 นม</button>
+                <button class="chip chip-feed" onclick="setFeedF('ผัก',this)">🥬 ผัก</button>
+                <button class="chip chip-feed" onclick="setFeedF('เครื่องดื่ม',this)">🥤 เครื่องดื่ม</button>
+                <button class="chip chip-feed" onclick="setFeedF('อาหาร',this)">🍱 อาหาร</button>
+            </div>
+            <div class="dg" id="dealGrid"></div>
+        </div>
+
+        <!-- ════════════════════════════════════
+     MODALS
+════════════════════════════════════ -->
+
+        <!-- Deal Creation -->
+        <div class="ov" id="dealModal">
+            <div class="modal" style="border-top:4px solid var(--role-ai)">
+                <div class="modal-inner">
+                    <div class="mtl">💡 สร้าง Deal ลดราคา</div>
+                    <div class="muted" id="mProd" style="margin-bottom:12px"></div>
+                    <div class="rdisp">
+                        <div class="rnum" id="mRisk"></div>
+                        <div class="rlbl">Risk Score</div>
+                    </div>
+                    <div style="font-size:.77rem;color:var(--txt2);padding:10px 13px;border-radius:9px;background:var(--role-ai-lt);border:1.5px solid #c7d2fe;margin-bottom:12px"
+                        id="mReas"></div>
+                    <div class="fr">
+                        <div class="fg"><label class="fl2">ราคาปกติ</label><input class="fi" id="mOrig" readonly></div>
+                        <div class="fg"><label class="fl2">ราคา Deal</label><input class="fi" id="mDeal" type="number">
+                        </div>
+                    </div>
+                    <div class="ma"><button class="btn btn-g" onclick="closeOv('dealModal')">ยกเลิก</button><button
+                            class="btn btn-ai" onclick="confirmDeal()">✓ สร้าง Deal</button></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Store Detail Modal (Feed) -->
+        <div class="ov" id="storeModal">
+            <div class="modal modal-store">
+                <div class="store-hero" id="sm-hero"><span id="sm-emoji" style="position:relative;z-index:1"></span>
+                </div>
+                <div class="store-body">
+                    <div class="store-meta">
+                        <div>
+                            <div class="store-name" id="sm-name"></div>
+                            <div class="store-cat" id="sm-cat"></div>
+                        </div>
+                        <div style="text-align:right">
+                            <div style="font-family:var(--fm);font-size:2rem;font-weight:700;color:var(--warn);line-height:1"
+                                id="sm-rating-big">4.5</div>
+                            <div id="sm-stars" style="color:var(--warn);font-size:.9rem"></div>
+                            <div style="font-size:.68rem;color:var(--txt3)" id="sm-review-count"></div>
+                        </div>
+                    </div>
+
+                    <!-- Deal info -->
+                    <div
+                        style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--role-feed-lt);border-radius:10px;border:1.5px solid #fbcfe8;margin-bottom:14px">
+                        <div>
+                            <div style="font-size:.72rem;color:var(--txt3)">ราคาปกติ</div>
+                            <div style="text-decoration:line-through;color:var(--txt3);font-size:.9rem" id="sm-orig">
+                            </div>
+                        </div>
+                        <div style="text-align:right">
+                            <div style="font-size:.68rem;color:var(--role-feed);font-weight:600">DEAL PRICE</div>
+                            <div style="font-family:var(--fm);font-size:1.5rem;color:var(--role-feed);font-weight:700"
+                                id="sm-deal">
+                            </div>
+                        </div>
+                        <div style="background:var(--role-feed);color:#fff;border-radius:20px;padding:4px 12px;font-family:var(--fm);font-size:1rem;font-weight:700"
+                            id="sm-pct"></div>
+                    </div>
+
+                    <!-- Store stats -->
+                    <div class="store-stats">
+                        <div class="s-stat">
+                            <div class="s-val" id="sm-total-reviews">0</div>
+                            <div class="s-lbl">รีวิว</div>
+                        </div>
+                        <div class="s-stat">
+                            <div class="s-val" id="sm-total-orders">0</div>
+                            <div class="s-lbl">ออเดอร์</div>
+                        </div>
+                        <div class="s-stat">
+                            <div class="s-val" id="sm-response">98%</div>
+                            <div class="s-lbl">ตอบกลับ</div>
+                        </div>
+                        <div class="s-stat">
+                            <div class="s-val" id="sm-timer">2:30</div>
+                            <div class="s-lbl">เหลือเวลา</div>
+                        </div>
+                    </div>
+
+                    <!-- Rating breakdown -->
+                    <div class="h3" style="margin-bottom:10px">⭐ คะแนนรีวิว</div>
+                    <div class="rating-bars" id="sm-rating-bars"></div>
+
+                    <!-- Reviews list -->
+                    <div class="h3" style="margin-bottom:10px">💬 รีวิวจากลูกค้า</div>
+                    <div class="reviews-list" id="sm-reviews-list"></div>
+
+                    <!-- Write review -->
+                    <div style="margin-top:14px;padding:14px;background:var(--surface2);border-radius:12px;border:1.5px solid var(--border)"
+                        id="sm-review-form">
+                        <div class="h3" style="margin-bottom:10px">✍️ เขียนรีวิว</div>
+                        <div style="margin-bottom:8px">
+                            <div style="font-size:.75rem;color:var(--txt2);margin-bottom:6px">คะแนน:</div>
+                            <div class="star-input" id="starInput">
+                                <button class="star-btn" onclick="setStar(1)">★</button>
+                                <button class="star-btn" onclick="setStar(2)">★</button>
+                                <button class="star-btn" onclick="setStar(3)">★</button>
+                                <button class="star-btn" onclick="setStar(4)">★</button>
+                                <button class="star-btn" onclick="setStar(5)">★</button>
+                            </div>
+                        </div>
+                        <textarea class="fi" id="reviewText" rows="2" placeholder="บอกเล่าประสบการณ์ของคุณ..."
+                            style="resize:none;margin-bottom:8px;width:100%"></textarea>
+                        <button class="btn btn-feed sm" onclick="submitReview()"
+                            style="width:100%;justify-content:center">📝
+                            ส่งรีวิว + รับคูปอง</button>
+                    </div>
+
+                    <div class="ma">
+                        <button class="btn btn-g" onclick="closeOv('storeModal')">ปิด</button>
+                        <button class="btn btn-feed" onclick="addToCartFromStore()">🛒 ใส่ตะกร้า</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Coupon Received Modal -->
+        <div class="ov" id="couponModal">
+            <div class="modal" style="border-top:4px solid var(--role-feed)">
+                <div class="modal-inner">
+                    <div style="text-align:center;margin-bottom:6px;font-size:2rem">🎉</div>
+                    <div class="mtl" style="text-align:center">ได้รับคูปองแล้ว!</div>
+                    <div class="muted" style="text-align:center;margin-bottom:14px" id="cpn-desc"></div>
+                    <div class="coupon-card" id="couponCard" onclick="copyCoupon()">
+                        <div style="font-size:.68rem;color:var(--txt3);text-align:center;margin-bottom:4px">
+                            แตะเพื่อคัดลอกรหัส</div>
+                        <div class="coupon-code" id="cpn-code"></div>
+                        <div class="coupon-discount" id="cpn-discount"></div>
+                        <div class="coupon-detail" id="cpn-detail"></div>
+                        <div class="coupon-exp" id="cpn-exp"></div>
+                        <div class="copied-badge"><span style="font-size:1.5rem">✅</span>คัดลอกแล้ว!</div>
+                    </div>
+                    <div class="ma"><button class="btn btn-feed" style="width:100%;justify-content:center"
+                            onclick="closeOv('couponModal')">เก็บคูปองไว้ใช้</button></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- My Coupons Modal -->
+        <div class="ov" id="myCouponsModal">
+            <div class="modal" style="border-top:4px solid var(--role-feed)">
+                <div class="modal-inner">
+                    <div class="mtl">🎟 คูปองของฉัน</div>
+                    <div class="muted" style="margin-bottom:14px">คูปองทั้งหมดที่ได้รับ</div>
+                    <div class="my-coupons-list" id="myCouponsList"></div>
+                    <div class="ma"><button class="btn btn-g" onclick="closeOv('myCouponsModal')">ปิด</button></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Coupon Manager (Supplier) -->
+        <div class="ov" id="couponMgrModal">
+            <div class="modal" style="border-top:4px solid var(--role-sup)">
+                <div class="modal-inner">
+                    <div class="mtl">🎟 จัดการคูปอง</div>
+                    <div class="muted" style="margin-bottom:14px">คูปองที่ลูกค้าได้รับจากร้านของฉัน</div>
+                    <div id="couponMgrList"></div>
+                    <div class="ma"><button class="btn btn-g" onclick="closeOv('couponMgrModal')">ปิด</button></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- B2B Supplier Deal -->
+        <div class="ov" id="supModal">
+            <div class="modal" style="border-top:4px solid var(--role-sup)">
+                <div class="modal-inner">
+                    <div class="mtl">📦 Overstock Deal</div>
+                    <div class="muted" id="smProd" style="margin-bottom:12px"></div>
+                    <div class="fr">
+                        <div class="fg"><label class="fl2">ราคาปกติ</label><input class="fi" id="smOrig" readonly></div>
+                        <div class="fg"><label class="fl2">ราคา Deal</label><input class="fi" id="smDeal" type="number">
+                        </div>
+                        <div class="fg ff"><label class="fl2">จำนวน</label><input class="fi" id="smQty" type="number"
+                                value="20">
+                        </div>
+                    </div>
+                    <div class="ma"><button class="btn btn-g" onclick="closeOv('supModal')">ยกเลิก</button><button
+                            class="btn btn-sup" onclick="confirmSupDeal()">✓ ประกาศ</button></div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- #app -->
+
+    <div class="tc" id="toasts"></div>
+    <div class="cbar" id="cartBar">
+        <div style="font-family:var(--fm);font-size:.82rem;font-weight:600">🛒 <span id="cartIC">0</span> รายการ — <span
+                id="cartTot" style="color:var(--role-feed)">฿0</span></div>
+        <button class="btn btn-feed sm">ชำระเงิน →</button>
+    </div>
+
+    <script>
+        /* ══════════════════════════════
+           DATA
+        ══════════════════════════════ */
+        const products = [
+            { id: 1, name: 'ขนมปังโฮลวีต Bimbo', cat: 'เบเกอรี่', stock: 24, expiry: '2026-03-26', price: 45, deal_price: 25, risk: 87, has_deal: false, emoji: '🍞' },
+            { id: 2, name: 'นมสด Meiji 200ml', cat: 'นม', stock: 8, expiry: '2026-03-27', price: 32, deal_price: 20, risk: 72, has_deal: true, emoji: '🥛' },
+            { id: 3, name: 'โยเกิร์ต Yoplait สตรอเบอร์รี่', cat: 'นม', stock: 15, expiry: '2026-03-28', price: 38, deal_price: 21, risk: 91, has_deal: false, emoji: '🍓' },
+            { id: 4, name: 'ครัวซองต์เนย La Boulange', cat: 'เบเกอรี่', stock: 12, expiry: '2026-03-26', price: 55, deal_price: 30, risk: 79, has_deal: false, emoji: '🥐' },
+            { id: 5, name: 'น้ำส้มคั้นสด Tipco', cat: 'เครื่องดื่ม', stock: 6, expiry: '2026-03-29', price: 65, deal_price: 46, risk: 63, has_deal: false, emoji: '🍊' },
+            { id: 6, name: 'สลัดผักรวม SuperFresh', cat: 'ผัก', stock: 9, expiry: '2026-03-27', price: 85, deal_price: 55, risk: 58, has_deal: false, emoji: '🥗' },
+            { id: 7, name: 'เค้กช็อกโกแลต Birthday', cat: 'เบเกอรี่', stock: 3, expiry: '2026-03-26', price: 280, deal_price: 160, risk: 35, has_deal: true, emoji: '🎂' },
+            { id: 8, name: 'แซนวิชทูน่า 7-Eleven', cat: 'อาหาร', stock: 18, expiry: '2026-03-25', price: 42, deal_price: 25, risk: 15, has_deal: false, emoji: '🥪' },
+            { id: 9, name: 'ผักบุ้งออร์แกนิค', cat: 'ผัก', stock: 30, expiry: '2026-03-28', price: 28, deal_price: 18, risk: 45, has_deal: false, emoji: '🥬' },
+            { id: 10, name: 'ข้าวกล้องหุงสุก CP', cat: 'อาหาร', stock: 22, expiry: '2026-03-27', price: 35, deal_price: 22, risk: 68, has_deal: false, emoji: '🍚' },
+        ];
+        const suppliers = [
+            { id: 1, name: 'ฟาร์มผักสดบางบัวทอง', type: 'own', rating: 4.8, dist: 3.2, cat: 'ผักผลไม้', emoji: '🌿', items: [{ name: 'ผักบุ้ง', unit: 'kg', price: 45, stock: 50 }, { name: 'มะเขือ', unit: 'kg', price: 38, stock: 30 }, { name: 'ผักคะน้า', unit: 'kg', price: 52, stock: 25 }] },
+            { id: 2, name: 'ครัวหมูปิ้งลุงแดง', type: '3pl', rating: 4.5, dist: 1.8, cat: 'Semi-ready', emoji: '🍖', items: [{ name: 'หมูปิ้ง', unit: 'ไม้', price: 8, stock: 200 }, { name: 'ข้าวเหนียว', unit: 'กล่อง', price: 15, stock: 100 }] },
+            { id: 3, name: 'โรงเบเกอรี่ทองหล่อ', type: 'own', rating: 4.7, dist: 2.5, cat: 'เบเกอรี่', emoji: '🥖', items: [{ name: 'ขนมปังแถว', unit: 'แถว', price: 25, stock: 80 }, { name: 'Croissant', unit: 'ชิ้น', price: 18, stock: 60 }] },
+            { id: 4, name: 'ฟาร์มนมอินทรีย์เชียงใหม่', type: '3pl', rating: 4.9, dist: 320, cat: 'นม', emoji: '🐄', items: [{ name: 'นมสดพาสเจอร์', unit: 'ลิตร', price: 85, stock: 200 }, { name: 'โยเกิร์ต', unit: 'ถ้วย', price: 45, stock: 150 }] },
+        ];
+
+        // Store data (reviews, coupons)
+        const storeData = {};
+
+        // Seed initial reviews for each product/store
+        function seedStore(storeId) {
+            if (!storeData[storeId]) {
+                const seedReviews = [
+                    { user: 'คุณแอน', stars: 5, text: 'สินค้าสดมากๆ ราคาคุ้มค่า แนะนำเลยค่ะ!', date: '23 มี.ค. 2026', coupon: 'FL-ANNE-5' },
+                    { user: 'คุณโจ', stars: 4, text: 'ดีครับ ส่งเร็ว คุณภาพโอเค', date: '24 มี.ค. 2026', coupon: 'FL-JOE-4' },
+                    { user: 'คุณนก', stars: 5, text: 'ซื้อซ้ำหลายรอบแล้ว ไม่เคยผิดหวัง', date: '25 มี.ค. 2026', coupon: 'FL-NOK-5' },
+                ];
+                storeData[storeId] = { reviews: seedReviews, orders: Math.floor(Math.random() * 200) + 50 };
+            }
+            return storeData[storeId];
+        }
+
+        const b2bCart = [], b2bOrders = [], feedCart = [];
+        let curProd = null, curFD = null, curSP = null, invF = 'all', feedF = 'all', expS = null;
+        let curStarRating = 0;
+        let myCoupons = JSON.parse(localStorage.getItem('fl_coupons') || '[]');
+        let issuedCoupons = JSON.parse(localStorage.getItem('fl_issued_coupons') || '[]'); // supplier side
+
+        /* ══════════════════════════════
+           STATE MANAGEMENT
+        ══════════════════════════════ */
+        function loadState() {
+            const d = localStorage.getItem('fl_deals');
+            if (d) JSON.parse(d).forEach(x => { const p = products.find(q => q.id === x.id); if (p) { p.has_deal = true; p.deal_price = x.deal_price; } });
+            const o = localStorage.getItem('fl_orders');
+            if (o) b2bOrders.push(...JSON.parse(o));
+        }
+        function saveDeals() { localStorage.setItem('fl_deals', JSON.stringify(products.filter(p => p.has_deal).map(p => ({ id: p.id, deal_price: p.deal_price, name: p.name, emoji: p.emoji, cat: p.cat })))); }
+        function saveOrders() { localStorage.setItem('fl_orders', JSON.stringify(b2bOrders)); }
+        function saveCoupons() { localStorage.setItem('fl_coupons', JSON.stringify(myCoupons)); }
+        function saveIssuedCoupons() { localStorage.setItem('fl_issued_coupons', JSON.stringify(issuedCoupons)); }
+
+        /* ══════════════════════════════
+           NAVIGATION
+        ══════════════════════════════ */
+        const pageKeys = ['dashboard', 'inventory', 'b2b', 'supplier', 'feed'];
+        function nav(k) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-' + k).classList.add('active');
+            document.querySelectorAll('.nt,.mn').forEach(t => t.classList.toggle('active', t.dataset.page === k));
+            if (k === 'inventory') renderInv();
+            if (k === 'b2b') renderB2B();
+            if (k === 'supplier') { renderSup(); renderSupCoupons(); }
+            if (k === 'feed') renderFeed();
+            window.scrollTo(0, 0);
+        }
+
+        /* ══════════════════════════════
+           HELPERS
+        ══════════════════════════════ */
+        const rc = s => s >= 70 ? 'rh' : s >= 45 ? 'rm' : 'rl';
+        const sg = (p, r) => r >= 80 ? Math.round(p * .55) : r >= 60 ? Math.round(p * .70) : Math.round(p * .85);
+        const pct = (o, d) => Math.round((1 - d / o) * 100);
+        function rsn(p) { const d = Math.max(.5, Math.round((new Date(p.expiry) - Date.now()) / 86400000 * 10) / 10); return `เหลือ ${d} วัน × stock ${p.stock} ชิ้น`; }
+        function genCode(prefix = 'FL') { return prefix + '-' + Math.random().toString(36).substr(2, 4).toUpperCase() + '-' + Date.now().toString(36).substr(-3).toUpperCase(); }
+        function starsHTML(n, size = '.75rem') { return '★'.repeat(Math.round(n)) + '☆'.repeat(5 - Math.round(n)); }
+        function avgRating(reviews) { if (!reviews.length) return 0; return (reviews.reduce((s, r) => s + r.stars, 0) / reviews.length).toFixed(1); }
+
+        /* ══════════════════════════════
+           DASHBOARD
+        ══════════════════════════════ */
+        function renderDash() {
+            const sorted = [...products].sort((a, b) => b.risk - a.risk);
+            document.getElementById('riskTbody').innerHTML = sorted.slice(0, 8).map(p => {
+                const s = p.has_deal ? `<span class="bdg b-t" style="font-family:var(--fm);font-size:.63rem">✅ ACTIVE</span>`
+                    : `<div class="aic"><strong>${p.risk >= 70 ? 'ลดราคา ' + pct(p.price, sg(p.price, p.risk)) + '%' : 'จัดโปรฯ'}</strong><small>${rsn(p)}</small></div>`;
+                return `<tr class="${p.id <= 2 ? 'hl' : ''}">
+      <td><div class="pn">${p.emoji} ${p.name}</div><div class="pc">${p.cat}</div></td>
+      <td><b>${p.stock}</b><span style="color:var(--txt3);font-size:.7rem"> ชิ้น</span></td>
+      <td style="font-family:var(--fm);font-size:.75rem;white-space:nowrap">${p.expiry}</td>
+      <td><div class="${rc(p.risk)} rbw"><div class="rbb"><div class="rbf" data-w="${p.risk}" style="width:0%"></div></div><span class="rbn">${p.risk}%</span></div></td>
+      <td>${s}</td>
+      <td>${p.has_deal ? `<span class="bdg b-t" style="font-family:var(--fm);font-size:.62rem">LIVE</span>` : `<button class="btn btn-ai xs" onclick="openDM(${p.id})">+ Deal</button>`}</td>
+    </tr>`;
+            }).join('');
+            animB(); renderChart(); updateKPIs();
+        }
+        function animB() { setTimeout(() => document.querySelectorAll('.rbf').forEach(b => b.style.width = b.dataset.w + '%'), 120); }
+        function renderChart() {
+            const t = [...products].sort((a, b) => b.risk - a.risk).slice(0, 5);
+            document.getElementById('riskChart').innerHTML = t.map((p, i) => {
+                const h = Math.round(p.risk * 1.2);
+                const c = p.risk >= 70 ? 'var(--danger)' : p.risk >= 45 ? 'var(--warn)' : 'var(--success)';
+                return `<div class="cbw"><div class="cbn" style="color:${c}">${p.risk}%</div><div class="cb ${i === 2 ? 'ac' : ''}" style="height:${h}px"></div><div class="cbl">${p.emoji}</div></div>`;
+            }).join('');
+        }
+        function updateKPIs() {
+            const r = products.filter(p => p.risk >= 70 && !p.has_deal).length;
+            const d = products.filter(p => p.has_deal).length;
+            const s = products.filter(p => p.has_deal).reduce((acc, p) => acc + (p.price - p.deal_price) * Math.min(p.stock, 10), 0);
+            document.getElementById('kpi-risky').textContent = r;
+            document.getElementById('kpi-deals').textContent = d;
+            document.getElementById('kpi-save').textContent = `฿${s.toLocaleString()}`;
+            document.getElementById('dealCnt').textContent = d;
+        }
+        function refreshRisk() {
+            toast('🔄 AI กำลัง re-analyze...', 'i');
+            document.querySelectorAll('.rbf').forEach(b => b.style.width = '0%');
+            setTimeout(() => { animB(); toast('✅ อัปเดตแล้ว — พบ 4 SKU เสี่ยงสูง', 's'); }, 1200);
+        }
+
+        /* ══════════════════════════════
+           DEAL CREATION
+        ══════════════════════════════ */
+        function openDM(id) {
+            const p = products.find(x => x.id === id); curProd = p;
+            const s = sg(p.price, p.risk);
+            document.getElementById('mProd').textContent = `${p.emoji} ${p.name}`;
+            const rn = document.getElementById('mRisk');
+            rn.textContent = p.risk + '%';
+            rn.style.color = p.risk >= 70 ? 'var(--danger)' : p.risk >= 45 ? 'var(--warn)' : 'var(--success)';
+            document.getElementById('mReas').textContent = `📊 ${rsn(p)} — แนะนำลด ${pct(p.price, s)}%`;
+            document.getElementById('mOrig').value = p.price;
+            document.getElementById('mDeal').value = s;
+            openOv('dealModal');
+        }
+        function confirmDeal() {
+            if (!curProd) return;
+            curProd.has_deal = true;
+            curProd.deal_price = parseInt(document.getElementById('mDeal').value);
+            saveDeals(); closeOv('dealModal'); renderDash();
+            if (document.getElementById('page-inventory').classList.contains('active')) renderInv();
+            toast(`✅ Deal สร้างแล้ว! ${curProd.emoji} ลด ${pct(curProd.price, curProd.deal_price)}%`, 's');
+        }
+
+        /* ══════════════════════════════
+           INVENTORY
+        ══════════════════════════════ */
+        function setInvF(f, el) {
+            invF = f;
+            document.querySelectorAll('#invChips .chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active'); renderInv();
+        }
+        function renderInv() {
+            let list = [...products];
+            if (invF === 'high') list = list.filter(p => p.risk > 70);
+            if (invF === 'deal') list = list.filter(p => p.has_deal);
+            if (invF === 'low') list = list.filter(p => p.risk <= 45);
+            list.sort((a, b) => b.risk - a.risk);
+            document.getElementById('invTbody').innerHTML = list.map(p => `<tr>
+    <td><div class="pn">${p.emoji} ${p.name}</div></td>
+    <td><span class="bdg b-n">${p.cat}</span></td>
+    <td><b>${p.stock}</b><span style="color:var(--txt3);font-size:.7rem"> ชิ้น</span></td>
+    <td style="font-family:var(--fm);font-size:.73rem;white-space:nowrap">${p.expiry}</td>
+    <td><div class="${rc(p.risk)} rbw" style="min-width:90px"><div class="rbb"><div class="rbf" data-w="${p.risk}" style="width:0%"></div></div><span class="rbn">${p.risk}%</span></div></td>
+    <td><div style="font-family:var(--fm);font-size:.8rem;font-weight:600">฿${p.price}</div>${p.has_deal ? `<div style="font-size:.68rem;color:var(--success)">Deal:฿${p.deal_price}</div>` : ''}</td>
+    <td>${p.has_deal ? `<span class="bdg b-t" style="font-family:var(--fm);font-size:.62rem">ACTIVE</span>` : getBdg(p.risk)}</td>
+    <td>${p.has_deal ? `<button class="btn btn-g xs" onclick="rmDeal(${p.id})">🗑</button>` : `<button class="btn btn-ai xs" onclick="openDM(${p.id})">+ Deal</button>`}</td>
+  </tr>`).join('');
+            animB();
+        }
+        function getBdg(r) {
+            if (r >= 70) return `<span class="bdg b-r">⚠️ HIGH</span>`;
+            if (r >= 45) return `<span class="bdg b-a">⚡ MED</span>`;
+            return `<span class="bdg b-g">✅ LOW</span>`;
+        }
+        function rmDeal(id) {
+            const p = products.find(x => x.id === id); p.has_deal = false;
+            saveDeals(); renderInv(); updateKPIs();
+            toast(`🗑 ยกเลิก deal ${p.name}`, 'i');
+        }
+
+        /* ══════════════════════════════
+           B2B
+        ══════════════════════════════ */
+        function renderB2B() {
+            document.getElementById('supGrid').innerHTML = suppliers.map(s => `
+    <div class="card sc card-b2b" onclick="toggleS(${s.id})">
+      <div class="sico">${s.emoji}</div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+        <div><div class="sn">${s.name}</div><div class="sm2">${s.cat} · ${s.dist} กม.</div></div>
+        <div class="bdg ${s.type === 'own' ? 'b-t' : 'b-s'}" style="font-family:var(--fm);font-size:.62rem">${s.type === 'own' ? '🚗 OWN' : '🚚 3PL'}</div>
+      </div>
+      <div class="sr">
+        <div class="stars">${'★'.repeat(Math.floor(s.rating))}<span style="color:var(--txt3);font-size:.72rem"> ${s.rating}</span></div>
+        <div class="bdg b-n" style="font-size:.62rem">${s.items.length} รายการ</div>
+      </div>
+      ${expS === s.id ? `
+        <div style="margin:12px -4px 0;height:1px;background:var(--border)"></div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px" onclick="event.stopPropagation()">
+          ${s.items.map(it => `
+            <div class="item-row">
+              <div><div style="font-size:.8rem;font-weight:600">${it.name}</div><div class="muted">${it.stock} ${it.unit}</div></div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <div style="font-family:var(--fm);font-size:.8rem;color:var(--role-b2b);font-weight:700">฿${it.price}/${it.unit}</div>
+                <button class="btn btn-t xs" onclick="addBC('${s.name}','${it.name}',${it.price},'${it.unit}','${s.type}')">+</button>
+              </div>
+            </div>`).join('')}
+          ${s.type === '3pl' ? `<div class="bdg b-c" style="margin-top:2px;align-self:flex-start">🚚 ค่าส่ง 150–350 บาท</div>` : ''}
+        </div>`: ''
+                }
+    </div>`).join('');
+            const cc = document.getElementById('cartCnt'), cb = document.getElementById('checkBtn');
+            if (b2bCart.length > 0) { cc.style.display = 'inline-flex'; cc.textContent = `🛒 ${b2bCart.length}`; cb.style.display = 'inline-flex'; }
+            else { cc.style.display = 'none'; cb.style.display = 'none'; }
+            const ao = document.getElementById('activeOrds'), ol = document.getElementById('ordList');
+            if (b2bOrders.length > 0) {
+                ao.style.display = 'block';
+                ol.innerHTML = b2bOrders.map((o, i) => `
+      <div class="card oc card-b2b">
+        <div class="oi">📦</div>
+        <div class="oin"><div class="onam">${o.supplier}</div><div class="osub">${o.items.join(', ')} · ฿${o.total.toLocaleString()}</div></div>
+        <div class="oac">
+          ${o.status === 'holding'
+                        ? `<div class="esc-h">💰 HOLD ฿${o.total}</div><button class="btn btn-t sm" onclick="approveO(${i})">✓ รับของแล้ว</button>`
+                        : `<div class="esc-d">✅ โอนแล้ว ฿${o.total}</div>`}
+        </div>
+      </div>`).join('');
+            } else { ao.style.display = 'none'; }
+        }
+        function toggleS(id) { expS = expS === id ? null : id; renderB2B(); }
+        function addBC(sup, item, price, unit, type) { b2bCart.push({ sup, item, price, unit, type }); toast(`➕ เพิ่ม ${item}`, 's'); renderB2B(); }
+        function checkoutB2B() {
+            if (!b2bCart.length) return;
+            const sup = b2bCart[0].sup, total = b2bCart.reduce((s, i) => s + i.price * 10, 0), type = b2bCart[0].type;
+            b2bOrders.push({ supplier: sup, items: b2bCart.map(i => i.item), total, type, status: 'holding', time: new Date().toLocaleTimeString('th') });
+            b2bCart.length = 0; saveOrders(); renderB2B(); renderSup();
+            toast(`💰 ESCROW HOLD ฿${total.toLocaleString()}`, 's');
+        }
+        function approveO(i) { b2bOrders[i].status = 'paid'; saveOrders(); renderB2B(); renderSup(); toast(`✅ โอนเงิน ฿${b2bOrders[i].total.toLocaleString()}`, 's'); }
+
+        /* ══════════════════════════════
+           SUPPLIER
+        ══════════════════════════════ */
+        function renderSup() {
+            const sp = suppliers[0];
+            document.getElementById('supProd').innerHTML = sp.items.map(it => `
+    <div class="item-row">
+      <div><div style="font-weight:600;font-size:.82rem">${it.name}</div><div class="muted">${it.stock} ${it.unit} · ฿${it.price}</div></div>
+      <button class="btn btn-sup xs" onclick="openSM('${it.name}',${it.price})">+ Deal</button>
+    </div>`).join('');
+            const myO = b2bOrders.filter(o => o.supplier === sp.name || o.supplier.includes('บางบัวทอง'));
+            document.getElementById('inboxCnt').textContent = myO.length;
+            document.getElementById('newOrdBdg').style.display = myO.length > 0 ? 'inline-flex' : 'none';
+            document.getElementById('supOrds').innerHTML = myO.length > 0
+                ? myO.map((o, i) => `
+        <div style="padding:12px;background:var(--surface2);border-radius:9px;border:1.5px solid var(--border);margin-bottom:8px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap">
+            <div><div style="font-weight:600;font-size:.82rem">📦 Order #${1001 + i}</div><div class="muted">${o.items.join(', ')} · ${o.time}</div></div>
+            ${o.status === 'holding' ? `<div class="esc-h">💰 HOLD ฿${o.total}</div>` : `<div class="esc-d">✅ ได้รับแล้ว ฿${o.total}</div>`}
+          </div>
+        </div>`).join('')
+                : `<div style="color:var(--txt3);font-size:.8rem;text-align:center;padding:36px">ยังไม่มี order</div>`;
+        }
+        function openSM(name, price) {
+            curSP = { name, price };
+            document.getElementById('smProd').textContent = `📦 ${name}`;
+            document.getElementById('smOrig').value = price;
+            document.getElementById('smDeal').value = Math.round(price * .75);
+            openOv('supModal');
+        }
+        function confirmSupDeal() { closeOv('supModal'); toast(`📢 ประกาศ Deal ${curSP.name} แล้ว`, 's'); }
+
+        function renderSupCoupons() {
+            const el = document.getElementById('supCouponStats');
+            if (issuedCoupons.length === 0) {
+                el.innerHTML = `<div style="color:var(--txt3);font-size:.8rem;text-align:center;padding:24px">ยังไม่มีคูปองที่ถูกใช้</div>`;
+                return;
+            }
+            el.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">
+      <div style="text-align:center;padding:12px;background:var(--role-sup-lt);border-radius:10px;border:1.5px solid #bfdbfe">
+        <div style="font-family:var(--fm);font-size:1.4rem;font-weight:700;color:var(--role-sup)">${issuedCoupons.length}</div>
+        <div style="font-size:.68rem;color:var(--txt2)">ทั้งหมด</div>
+      </div>
+      <div style="text-align:center;padding:12px;background:var(--role-b2b-lt);border-radius:10px;border:1.5px solid #a7f3d0">
+        <div style="font-family:var(--fm);font-size:1.4rem;font-weight:700;color:var(--success)">${issuedCoupons.filter(c => c.used).length}</div>
+        <div style="font-size:.68rem;color:var(--txt2)">ใช้แล้ว</div>
+      </div>
+      <div style="text-align:center;padding:12px;background:var(--role-feed-lt);border-radius:10px;border:1.5px solid #fbcfe8">
+        <div style="font-family:var(--fm);font-size:1.4rem;font-weight:700;color:var(--role-feed)">${issuedCoupons.filter(c => !c.used).length}</div>
+        <div style="font-size:.68rem;color:var(--txt2)">ยังไม่ใช้</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      ${issuedCoupons.slice(-10).reverse().map(c => `
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surface2);border:1.5px solid var(--border);border-radius:9px;gap:8px;flex-wrap:wrap">
+          <div>
+            <div style="font-family:var(--fm);font-size:.78rem;font-weight:700;color:var(--role-feed)">${c.code}</div>
+            <div style="font-size:.68rem;color:var(--txt2)">${c.user} · ${c.dealName}</div>
+            <div style="font-size:.63rem;color:var(--txt3)">${c.date}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div style="font-family:var(--fm);font-size:.8rem;font-weight:700;color:var(--role-b2b)">-${c.discount}%</div>
+            <span class="mc-status ${c.used ? 'mc-expired' : 'mc-active'}">${c.used ? 'ใช้แล้ว' : 'ยังไม่ใช้'}</span>
+          </div>
+        </div>`).join('')}
+    </div>`;
+        }
+
+        function openCouponMgr() {
+            renderSupCoupons();
+            const el = document.getElementById('couponMgrList');
+            if (issuedCoupons.length === 0) {
+                el.innerHTML = `<div style="color:var(--txt3);font-size:.8rem;text-align:center;padding:24px">ยังไม่มีคูปองที่ออกไป</div>`;
+            } else {
+                el.innerHTML = `<div style="display:flex;flex-direction:column;gap:8px">
+      ${issuedCoupons.slice().reverse().map(c => `
+        <div style="padding:10px 12px;background:var(--surface2);border:1.5px solid var(--border);border-radius:9px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+            <div>
+              <div style="font-family:var(--fm);font-weight:700;font-size:.8rem;color:var(--role-feed)">${c.code}</div>
+              <div style="font-size:.7rem;color:var(--txt2)">${c.user} · ${c.dealName} · -${c.discount}%</div>
+              <div style="font-size:.63rem;color:var(--txt3)">${c.date}</div>
+            </div>
+            <span class="mc-status ${c.used ? 'mc-expired' : 'mc-active'}">${c.used ? 'ใช้แล้ว' : 'ยังไม่ใช้'}</span>
+          </div>
+        </div>`).join('')}
+    </div>`;
+            }
+            openOv('couponMgrModal');
+        }
+
+        /* ══════════════════════════════
+           DEAL FEED
+        ══════════════════════════════ */
+        function setFeedF(f, el) {
+            feedF = f;
+            document.querySelectorAll('#feedChips .chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active'); renderFeed();
+        }
+        function renderFeed() {
+            const active = products.filter(p => p.has_deal);
+            const all = [...active, ...mocks()].filter(d => feedF === 'all' || d.cat === feedF);
+            document.getElementById('dealCnt').textContent = all.length;
+            const g = document.getElementById('dealGrid');
+            if (!all.length) { g.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:var(--txt3);padding:60px;font-size:.83rem">ยังไม่มีดีลในหมวดนี้</div>`; return; }
+            g.innerHTML = all.map((d, i) => {
+                const p = pct(d.price, d.deal_price);
+                const store = seedStore(d.id);
+                const avgR = parseFloat(avgRating(store.reviews));
+                return `<div class="card dc card-feed" onclick='openStoreModal(${JSON.stringify(d).replace(/'/g, "&#39;")})'>
+      <div class="dt">${d.emoji}<div class="dp">-${p}%</div></div>
+      <div class="db">
+        <div class="dtl">${d.name}</div>
+        <div class="dst">🏪 FreshMart ${['สาทร', 'สีลม', 'บางรัก', 'พระราม 4'][i % 4]}</div>
+        <div class="dpr"><span class="dpo">฿${d.price}</span><span class="dpn">฿${d.deal_price}</span></div>
+        <div class="store-rating-mini">
+          <span class="star-mini">${'★'.repeat(Math.round(avgR))}</span>
+          <span class="rating-num">${avgR}</span>
+          <span class="review-cnt">(${store.reviews.length})</span>
+        </div>
+        <div class="dcd" id="cd-${i}">⏱ กำลังโหลด...</div>
+        <div class="ddi">📍 ${(0.4 + i * .6).toFixed(1)} กม.</div>
+      </div>
+    </div>`;
+            }).join('');
+            all.forEach((_, i) => startCd(`cd-${i}`, (5 - i % 3) * 3600 - i * 480));
+            updateCouponBadge();
+        }
+        function mocks() {
+            return [
+                { id: 101, name: 'เค้กน้ำผึ้ง Honey', cat: 'เบเกอรี่', price: 120, deal_price: 65, emoji: '🍰' },
+                { id: 102, name: 'สมูทตี้ผลไม้รวม', cat: 'เครื่องดื่ม', price: 85, deal_price: 50, emoji: '🥤' },
+                { id: 103, name: 'ข้าวห่อสาหร่าย', cat: 'อาหาร', price: 45, deal_price: 28, emoji: '🍙' },
+                { id: 104, name: 'มะม่วงสุก ชุมพร', cat: 'ผัก', price: 60, deal_price: 35, emoji: '🥭' }
+            ];
+        }
+
+        const cdT = {};
+        function startCd(id, s) {
+            if (cdT[id]) clearInterval(cdT[id]); let t = s;
+            const f = () => {
+                const el = document.getElementById(id); if (!el) { clearInterval(cdT[id]); return; }
+                const h = Math.floor(t / 3600), m = Math.floor((t % 3600) / 60), sc = t % 60;
+                el.textContent = `⏱ ${h > 0 ? h + 'ชม. ' : ''}${m}:${sc.toString().padStart(2, '0')} เหลือ`;
+                if (t <= 0) clearInterval(cdT[id]); t--;
+            }; f(); cdT[id] = setInterval(f, 1000);
+        }
+
+        /* ══════════════════════════════
+           STORE DETAIL MODAL
+        ══════════════════════════════ */
+        let curStoreId = null;
+        function openStoreModal(d) {
+            curFD = d; curStoreId = d.id; curStarRating = 0;
+            const store = seedStore(d.id);
+            const p = pct(d.price, d.deal_price);
+            const avg = parseFloat(avgRating(store.reviews));
+
+            // Hero
+            document.getElementById('sm-emoji').textContent = d.emoji;
+            document.getElementById('sm-name').textContent = d.name;
+            document.getElementById('sm-cat').textContent = d.cat;
+            document.getElementById('sm-rating-big').textContent = avg.toFixed(1);
+            document.getElementById('sm-stars').textContent = '★'.repeat(Math.round(avg)) + '☆'.repeat(5 - Math.round(avg));
+            document.getElementById('sm-review-count').textContent = `${store.reviews.length} รีวิว`;
+
+            // Deal info
+            document.getElementById('sm-orig').textContent = `฿${d.price}`;
+            document.getElementById('sm-deal').textContent = `฿${d.deal_price}`;
+            document.getElementById('sm-pct').textContent = `-${p}%`;
+            document.getElementById('sm-total-reviews').textContent = store.reviews.length;
+            document.getElementById('sm-total-orders').textContent = store.orders;
+            document.getElementById('sm-response').textContent = '98%';
+
+            // Countdown in modal
+            let secs = (5 - store.id % 3) * 3600;
+            clearInterval(window.storeTimer);
+            window.storeTimer = setInterval(() => {
+                const el = document.getElementById('sm-timer');
+                if (!el) { clearInterval(window.storeTimer); return; }
+                const h = Math.floor(secs / 3600), m = Math.floor((secs % 3600) / 60), s = secs % 60;
+                el.textContent = `${h > 0 ? h + ':' : ''}${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                if (secs <= 0) clearInterval(window.storeTimer); secs--;
+            }, 1000);
+
+            // Rating bars
+            const counts = [0, 0, 0, 0, 0];
+            store.reviews.forEach(r => counts[r.stars - 1]++);
+            document.getElementById('sm-rating-bars').innerHTML =
+                [5, 4, 3, 2, 1].map(n => {
+                    const cnt = counts[n - 1];
+                    const w = store.reviews.length ? Math.round(cnt / store.reviews.length * 100) : 0;
+                    return `<div class="rb-row">
+        <span class="rb-lbl">${n}</span>
+        <div class="rb-track"><div class="rb-fill" style="width:${w}%"></div></div>
+        <span class="rb-cnt">${cnt}</span>
+      </div>`;
+                }).join('');
+
+            // Reviews
+            renderStoreReviews(store.reviews);
+
+            // Star input reset
+            setStar(0);
+            document.getElementById('reviewText').value = '';
+            document.getElementById('sm-review-form').style.display = 'block';
+
+            openOv('storeModal');
+        }
+
+        function renderStoreReviews(reviews) {
+            const list = document.getElementById('sm-reviews-list');
+            if (!reviews.length) { list.innerHTML = `<div style="color:var(--txt3);font-size:.78rem;text-align:center;padding:20px">ยังไม่มีรีวิว — เป็นคนแรก!</div>`; return; }
+            list.innerHTML = reviews.slice().reverse().map(r => `
+    <div class="review-item">
+      <div class="rv-header">
+        <span class="rv-user">👤 ${r.user}</span>
+        <span class="rv-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5 - r.stars)}</span>
+        <span class="rv-date">${r.date}</span>
+      </div>
+      <div class="rv-text">${r.text}</div>
+      ${r.coupon ? `<div class="rv-coupon">🎟 ได้รับคูปอง ${r.coupon}</div>` : ''}
+    </div>`).join('');
+        }
+
+        function setStar(n) {
+            curStarRating = n;
+            document.querySelectorAll('.star-btn').forEach((b, i) => {
+                b.classList.toggle('active', i < n);
+            });
+        }
+
+        function submitReview() {
+            if (!curStarRating) { toast('กรุณาเลือกคะแนนก่อนครับ', 'i'); return; }
+            const text = document.getElementById('reviewText').value.trim();
+            if (!text) { toast('กรุณาเขียนรีวิวก่อนครับ', 'i'); return; }
+
+            // Generate coupon
+            const disc = curStarRating >= 4 ? 15 : curStarRating >= 3 ? 10 : 5;
+            const code = genCode('FL');
+            const names = ['คุณลูกค้า', 'ขอบคุณมาก', 'คุณผู้ซื้อ'];
+            const userName = names[Math.floor(Math.random() * names.length)];
+
+            // Add review
+            const store = seedStore(curStoreId);
+            const today = new Date().toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
+            store.reviews.push({ user: userName, stars: curStarRating, text, date: today, coupon: code });
+
+            // Add coupon to customer
+            const exp = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
+            const coupon = { code, discount: disc, dealName: curFD.name, store: `FreshMart`, date: today, exp, used: false };
+            myCoupons.push(coupon); saveCoupons();
+
+            // Record for supplier
+            issuedCoupons.push({ code, discount: disc, dealName: curFD.name, user: userName, date: today, used: false });
+            saveIssuedCoupons();
+
+            // Update UI
+            renderStoreReviews(store.reviews);
+            document.getElementById('sm-review-form').style.display = 'none';
+            setStar(0);
+
+            // Update rating display
+            const avg = parseFloat(avgRating(store.reviews));
+            document.getElementById('sm-rating-big').textContent = avg.toFixed(1);
+            document.getElementById('sm-stars').textContent = '★'.repeat(Math.round(avg)) + '☆'.repeat(5 - Math.round(avg));
+            document.getElementById('sm-review-count').textContent = `${store.reviews.length} รีวิว`;
+            const counts = [0, 0, 0, 0, 0];
+            store.reviews.forEach(r => counts[r.stars - 1]++);
+            document.getElementById('sm-rating-bars').innerHTML =
+                [5, 4, 3, 2, 1].map(n => {
+                    const cnt = counts[n - 1]; const w = store.reviews.length ? Math.round(cnt / store.reviews.length * 100) : 0;
+                    return `<div class="rb-row"><span class="rb-lbl">${n}</span><div class="rb-track"><div class="rb-fill" style="width:${w}%"></div></div><span class="rb-cnt">${cnt}</span></div>`;
+                }).join('');
+
+            // Show coupon
+            closeOv('storeModal');
+            showCoupon(coupon);
+            updateCouponBadge();
+            if (document.getElementById('page-feed').classList.contains('active')) renderFeed();
+        }
+
+        function showCoupon(coupon) {
+            document.getElementById('cpn-desc').textContent = `รีวิว ${coupon.dealName} ได้รับคูปองส่วนลด ${coupon.discount}%`;
+            document.getElementById('cpn-code').textContent = coupon.code;
+            document.getElementById('cpn-discount').textContent = `ส่วนลด ${coupon.discount}% สำหรับดีลถัดไป`;
+            document.getElementById('cpn-detail').textContent = `ใช้ได้กับ: ${coupon.store}`;
+            document.getElementById('cpn-exp').textContent = `หมดอายุ: ${coupon.exp}`;
+            document.getElementById('couponCard').classList.remove('copied');
+            openOv('couponModal');
+        }
+
+        function copyCoupon() {
+            const code = document.getElementById('cpn-code').textContent;
+            if (navigator.clipboard) { navigator.clipboard.writeText(code); }
+            document.getElementById('couponCard').classList.add('copied');
+            setTimeout(() => document.getElementById('couponCard').classList.remove('copied'), 1500);
+            toast(`📋 คัดลอกรหัส ${code} แล้ว`, 's');
+        }
+
+        function addToCartFromStore() {
+            if (!curFD) return;
+            feedCart.push(curFD);
+            closeOv('storeModal');
+            const total = feedCart.reduce((s, i) => s + i.deal_price, 0);
+            document.getElementById('cartIC').textContent = feedCart.length;
+            document.getElementById('cartTot').textContent = `฿${total}`;
+            document.getElementById('cartBar').classList.add('show');
+            toast(`🛒 เพิ่ม ${curFD.name} ในตะกร้า!`, 's');
+        }
+
+        function openMyCoupons() {
+            const el = document.getElementById('myCouponsList');
+            if (!myCoupons.length) {
+                el.innerHTML = `<div style="text-align:center;color:var(--txt3);font-size:.82rem;padding:32px">ยังไม่มีคูปอง<br><small>รีวิวสินค้าเพื่อรับคูปอง!</small></div>`;
+            } else {
+                el.innerHTML = myCoupons.slice().reverse().map((c, i) => `
+      <div class="my-coupon ${c.used ? 'mc-used' : ''}">
+        <div class="mc-left">
+          <div class="mc-code">${c.code}</div>
+          <div class="mc-desc">ส่วนลด ${c.discount}% · ${c.dealName}</div>
+          <div class="mc-exp">หมดอายุ ${c.exp}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="mc-status ${c.used ? 'mc-expired' : 'mc-active'}">${c.used ? 'ใช้แล้ว' : 'ใช้ได้'}</span>
+          ${!c.used ? `<button class="btn btn-feed xs" onclick="useCoupon(${myCoupons.length - 1 - i})">ใช้</button>` : ''}
+        </div>
+      </div>`).join('');
+            }
+            openOv('myCouponsModal');
+        }
+
+        function useCoupon(idx) {
+            myCoupons[idx].used = true; saveCoupons();
+            // Mark in issued coupons too
+            const code = myCoupons[idx].code;
+            const ic = issuedCoupons.find(c => c.code === code);
+            if (ic) ic.used = true; saveIssuedCoupons();
+            openMyCoupons(); updateCouponBadge();
+            toast(`✅ ใช้คูปอง ${code} เรียบร้อย`, 's');
+        }
+
+        function updateCouponBadge() {
+            const active = myCoupons.filter(c => !c.used).length;
+            const badge = document.getElementById('myCouponBadge');
+            if (active > 0) { badge.textContent = active; badge.style.display = 'inline-block'; }
+            else badge.style.display = 'none';
+        }
+
+        /* ══════════════════════════════
+           MODAL HELPERS
+        ══════════════════════════════ */
+        function openOv(id) { document.getElementById(id).classList.add('open'); }
+        function closeOv(id) { document.getElementById(id).classList.remove('open'); if (id === 'storeModal') clearInterval(window.storeTimer); }
+        document.querySelectorAll('.ov').forEach(m => m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); }));
+
+        /* ══════════════════════════════
+           TOAST
+        ══════════════════════════════ */
+        function toast(msg, type = 's') {
+            const c = document.getElementById('toasts');
+            const t = document.createElement('div');
+            t.className = `toast t${type}`; t.innerHTML = msg; c.appendChild(t);
+            setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(12px)'; t.style.transition = 'all .3s'; setTimeout(() => t.remove(), 300); }, 3400);
+        }
+
+        /* ══════════════════════════════
+           CLOCK
+        ══════════════════════════════ */
+        function tick() {
+            const n = new Date();
+            const s = n.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            document.getElementById('clk').textContent = s;
+            document.getElementById('liveTs').textContent = `🕐 ${s}`;
+        }
+        setInterval(tick, 1000); tick();
+
+        /* ══════════════════════════════
+           INIT
+        ══════════════════════════════ */
+        loadState(); renderDash(); updateCouponBadge();
+    </script>
+</body>
+
+</html>
